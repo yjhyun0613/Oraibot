@@ -1,0 +1,29 @@
+/robot5/collision_monitor:
+  ros__parameters:
+    use_sim_time: false
+    # --- [이 두 줄을 다시 원래대로 되돌립니다!] ---
+    base_frame_id: "base_link"
+    odom_frame_id: "odom"
+    # ----------------------------------------
+    
+    cmd_vel_in_topic: "cmd_vel_nav"
+    cmd_vel_out_topic: "cmd_vel"
+    
+    state_topic: "collision_monitor_state"
+    transform_tolerance: 0.5
+    source_timeout: 5.0
+    stop_pub_timeout: 2.0
+    
+    polygons: ["StopZone"]
+    StopZone:
+      type: "polygon"
+      points: [-0.15, -0.15, -0.15, -0.35, -0.50, -0.35, -0.50, -0.15]
+      action_type: "stop"
+      min_points: 4
+      visualize: true
+      polygon_pub_topic: "polygon_stop"
+      
+    observation_sources: ["scan"]
+    scan:
+      type: "scan"
+      topic: "scan"
