@@ -3,44 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oraibot - Doosan Cobot 3D Dome Scanning & Digital Twin System</title>
+  <title>Oraibot - TurtleBot 4 Autonomous Navigation & AI Safety System</title>
   
   <!-- Google Fonts: Outfit & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Plotly.js CDN for 3D Interactive Visualization -->
-  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
-  
-  <!-- MathJax CDN for LaTeX math notation -->
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es2022/es5/tex-mml-chtml.js"></script>
 
   <style>
     :root {
-      --bg-primary: #08090d;
-      --bg-secondary: #0f1118;
-      --bg-tertiary: #161924;
-      --bg-card: rgba(22, 25, 36, 0.7);
-      --accent-purple: #9d4edd;
-      --accent-purple-glow: rgba(157, 78, 221, 0.4);
+      --bg-primary: #07080c;
+      --bg-secondary: #0c0e15;
+      --bg-tertiary: #131722;
+      --bg-card: rgba(19, 23, 34, 0.7);
+      --accent-orange: #ff6b00;
+      --accent-orange-glow: rgba(255, 107, 0, 0.3);
       --accent-cyan: #00f5d4;
       --accent-cyan-glow: rgba(0, 245, 212, 0.3);
       --accent-blue: #3b82f6;
+      --accent-blue-glow: rgba(59, 130, 246, 0.3);
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
       --text-muted: #475569;
       --color-success: #10b981;
-      --color-danger: #f43f5e;
+      --color-danger: #ef4444;
       --color-warning: #fbbf24;
       --card-border: rgba(255, 255, 255, 0.05);
-      --card-border-hover: rgba(0, 245, 212, 0.2);
+      --card-border-hover: rgba(0, 245, 212, 0.15);
       --font-title: 'Outfit', sans-serif;
       --font-body: 'Inter', sans-serif;
+      --font-code: 'Fira Code', monospace;
       --transition-speed: 0.3s;
     }
 
@@ -74,7 +69,7 @@
       border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: var(--accent-purple);
+      background: var(--accent-orange);
     }
 
     /* Grid background */
@@ -98,7 +93,7 @@
       right: -10%;
       width: 50vw;
       height: 50vw;
-      background: radial-gradient(circle, var(--accent-purple-glow) 0%, transparent 70%);
+      background: radial-gradient(circle, var(--accent-orange-glow) 0%, transparent 70%);
       z-index: -1;
       pointer-events: none;
       filter: blur(80px);
@@ -131,7 +126,7 @@
     }
 
     .gradient-text {
-      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 70%, var(--accent-purple) 100%);
+      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 70%, var(--accent-orange) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -150,7 +145,7 @@
       left: 0;
       width: 100%;
       z-index: 100;
-      background: rgba(8, 9, 13, 0.7);
+      background: rgba(7, 8, 12, 0.7);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--card-border);
@@ -176,8 +171,8 @@
     }
 
     .logo i {
-      color: var(--accent-cyan);
-      text-shadow: 0 0 10px var(--accent-cyan-glow);
+      color: var(--accent-orange);
+      text-shadow: 0 0 10px var(--accent-orange-glow);
     }
 
     .nav-menu {
@@ -196,7 +191,7 @@
     }
 
     .nav-link:hover {
-      color: var(--accent-cyan);
+      color: var(--accent-orange);
     }
 
     .nav-link::after {
@@ -206,7 +201,7 @@
       left: 0;
       width: 0;
       height: 2px;
-      background-color: var(--accent-cyan);
+      background-color: var(--accent-orange);
       transition: width var(--transition-speed);
     }
 
@@ -230,10 +225,12 @@
     }
 
     .btn-github:hover {
-      background: var(--accent-purple);
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 15px var(--accent-purple-glow);
+      background: var(--accent-orange);
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 15px var(--accent-orange-glow);
       transform: translateY(-2px);
+      color: #000;
+      font-weight: 600;
     }
 
     /* Hero Section */
@@ -254,11 +251,11 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(157, 78, 221, 0.15);
-      border: 1px solid rgba(157, 78, 221, 0.3);
+      background: rgba(255, 107, 0, 0.15);
+      border: 1px solid rgba(255, 107, 0, 0.3);
       padding: 0.35rem 1rem;
       border-radius: 30px;
-      color: var(--accent-purple);
+      color: var(--accent-orange);
       font-size: 0.85rem;
       font-weight: 600;
       text-transform: uppercase;
@@ -289,7 +286,7 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-orange));
       border: none;
       color: #000;
       padding: 0.85rem 2rem;
@@ -302,7 +299,7 @@
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(157, 78, 221, 0.4);
+      box-shadow: 0 8px 30px rgba(255, 107, 0, 0.4);
       color: #fff;
     }
 
@@ -373,7 +370,7 @@
     }
 
     .section-tag {
-      color: var(--accent-cyan);
+      color: var(--accent-orange);
       font-size: 0.85rem;
       font-weight: 600;
       text-transform: uppercase;
@@ -402,7 +399,7 @@
     }
 
     .overview-highlight {
-      border-left: 3px solid var(--accent-purple);
+      border-left: 3px solid var(--accent-orange);
       padding-left: 1.5rem;
       margin: 2rem 0;
     }
@@ -438,7 +435,7 @@
       top: 40px;
       width: 2px;
       height: calc(100% - 25px);
-      background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple));
+      background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-orange));
     }
 
     .arch-icon {
@@ -457,9 +454,9 @@
     }
 
     .arch-step:nth-child(even) .arch-icon {
-      border-color: var(--accent-purple);
-      color: var(--accent-purple);
-      box-shadow: 0 0 10px var(--accent-purple-glow);
+      border-color: var(--accent-orange);
+      color: var(--accent-orange);
+      box-shadow: 0 0 10px var(--accent-orange-glow);
     }
 
     .arch-content h4 {
@@ -475,15 +472,15 @@
     /* My Role */
     .role-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
     }
 
     .role-card {
       background: var(--bg-card);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 2rem;
+      padding: 2.25rem;
       transition: all var(--transition-speed);
       backdrop-filter: blur(10px);
       display: flex;
@@ -494,22 +491,22 @@
     .role-card:hover {
       border-color: var(--card-border-hover);
       transform: translateY(-8px);
-      box-shadow: 0 15px 35px rgba(0, 245, 212, 0.05);
+      box-shadow: 0 15px 35px rgba(255, 107, 0, 0.05);
     }
 
     .role-icon-box {
-      font-size: 2rem;
+      font-size: 2.5rem;
       margin-bottom: 1.5rem;
       color: var(--accent-cyan);
     }
 
     .role-card:nth-child(even) .role-icon-box {
-      color: var(--accent-purple);
+      color: var(--accent-orange);
     }
 
     .role-title {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
+      font-size: 1.35rem;
+      margin-bottom: 1.25rem;
       color: var(--text-primary);
     }
 
@@ -517,12 +514,12 @@
       list-style-type: none;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.85rem;
       margin-top: auto;
     }
 
     .role-card li {
-      font-size: 0.88rem;
+      font-size: 0.92rem;
       color: var(--text-secondary);
       display: flex;
       align-items: flex-start;
@@ -530,39 +527,44 @@
     }
 
     .role-card li i {
-      margin-top: 0.25rem;
-      font-size: 0.75rem;
+      margin-top: 0.3rem;
+      font-size: 0.8rem;
       color: var(--accent-cyan);
     }
 
     .role-card:nth-child(even) li i {
-      color: var(--accent-purple);
+      color: var(--accent-orange);
     }
 
     /* Interactive Live Simulator */
     .sim-grid {
       display: grid;
-      grid-template-columns: 1.4fr 0.6fr;
+      grid-template-columns: 1.2fr 0.8fr;
       gap: 2.5rem;
       align-items: stretch;
     }
 
     .sim-viewport {
-      background: var(--bg-secondary);
+      background: #0f111a;
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 1.5rem;
+      padding: 1rem;
       position: relative;
-      min-height: 500px;
+      min-height: 480px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
     }
 
-    #plotly-div {
+    #sim-canvas {
+      background: #090a10;
+      border-radius: 8px;
       width: 100%;
-      height: 480px;
-      flex-grow: 1;
+      max-width: 580px;
+      height: 400px;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
     }
 
     .sim-controls-panel {
@@ -572,7 +574,7 @@
       padding: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.25rem;
       backdrop-filter: blur(10px);
     }
 
@@ -585,20 +587,15 @@
       border-radius: 8px;
       font-weight: 700;
       text-transform: uppercase;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       letter-spacing: 0.05em;
     }
 
     .status-idle { background: rgba(148, 163, 184, 0.1); color: var(--text-secondary); border: 1px solid rgba(148, 163, 184, 0.2); }
-    .status-scanning { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
-    .status-pass { background: rgba(16, 185, 129, 0.15); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); animation: pulseGreen 2s infinite; }
-    .status-fail { background: rgba(239, 68, 68, 0.15); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.3); animation: pulseRed 2s infinite; }
+    .status-active { background: rgba(0, 245, 212, 0.1); color: var(--accent-cyan); border: 1px solid rgba(0, 245, 212, 0.3); }
+    .status-warning { background: rgba(251, 191, 36, 0.15); color: var(--color-warning); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.3); animation: pulseRed 2s infinite; }
 
-    @keyframes pulseGreen {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
     @keyframes pulseRed {
       0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
       70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
@@ -606,13 +603,12 @@
     }
 
     .sim-buttons-stack {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
       gap: 0.75rem;
     }
 
     .btn-sim {
-      width: 100%;
       padding: 0.85rem;
       border-radius: 8px;
       font-weight: 600;
@@ -621,12 +617,14 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      font-size: 0.88rem;
       transition: all var(--transition-speed);
+      border: 1px solid transparent;
     }
 
     .btn-sim-start {
       background: var(--accent-cyan);
-      border: 1px solid var(--accent-cyan);
+      border-color: var(--accent-cyan);
       color: #000;
     }
 
@@ -636,91 +634,76 @@
       box-shadow: 0 0 15px var(--accent-cyan-glow);
     }
 
-    .btn-sim-defect {
-      background: transparent;
-      border: 1px solid var(--text-muted);
-      color: var(--text-primary);
+    .btn-sim-resume {
+      background: var(--accent-orange);
+      border-color: var(--accent-orange);
+      color: #000;
     }
 
-    .btn-sim-defect.active {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: var(--color-danger);
-      color: var(--color-danger);
-      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    .btn-sim-resume:hover:not(:disabled) {
+      background: transparent;
+      color: var(--accent-orange);
+      box-shadow: 0 0 15px var(--accent-orange-glow);
     }
 
     .btn-sim:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
-    .sim-stats-list {
+    /* Terminal Console Style */
+    .terminal-console {
+      background: #05060a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: var(--font-code);
+      font-size: 0.82rem;
+      color: #38bdf8;
+      height: 180px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
       display: flex;
       flex-direction: column;
-      gap: 0.85rem;
+      gap: 0.35rem;
+    }
+
+    .term-line {
+      line-height: 1.4;
+    }
+
+    .term-system { color: #64748b; }
+    .term-alert { color: var(--color-danger); font-weight: bold; }
+    .term-gui { color: var(--accent-orange); }
+    .term-success { color: var(--color-success); }
+
+    .sim-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
       border-top: 1px solid var(--card-border);
-      border-bottom: 1px solid var(--card-border);
-      padding: 1.25rem 0;
+      padding-top: 1rem;
     }
 
-    .sim-stat-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-    }
-
-    .sim-stat-label {
-      color: var(--text-secondary);
-    }
-
-    .sim-stat-value {
-      font-family: monospace;
-      font-weight: 600;
-    }
-
-    .cloud-sync-status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-    }
-
-    .sync-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--text-muted);
-    }
-
-    .sync-indicator.active {
-      background: var(--accent-cyan);
-      box-shadow: 0 0 8px var(--accent-cyan);
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
-    }
-
-    .report-link-box {
-      background: rgba(157, 78, 221, 0.05);
-      border: 1px dashed rgba(157, 78, 221, 0.3);
-      padding: 0.85rem;
+    .sim-stat-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
       border-radius: 8px;
-      text-align: center;
-      display: none;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
     }
 
-    .report-link-box a {
-      color: var(--accent-purple);
-      font-size: 0.85rem;
-      text-decoration: none;
+    .sim-stat-lbl {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .sim-stat-val {
+      font-family: var(--font-code);
+      font-size: 0.95rem;
       font-weight: 600;
-    }
-
-    .report-link-box a:hover {
-      text-decoration: underline;
     }
 
     /* Troubleshooting Tabs Section */
@@ -756,8 +739,8 @@
 
     .trouble-tab.active {
       background: var(--bg-tertiary);
-      border-color: var(--accent-cyan);
-      box-shadow: inset 4px 0 0 var(--accent-cyan);
+      border-color: var(--accent-orange);
+      box-shadow: inset 4px 0 0 var(--accent-orange);
     }
 
     .trouble-tab-num {
@@ -774,7 +757,7 @@
     }
 
     .trouble-tab.active .trouble-tab-num {
-      background: var(--accent-cyan);
+      background: var(--accent-orange);
       color: #000;
     }
 
@@ -817,7 +800,7 @@
     }
 
     .trouble-meta-card h5 {
-      color: var(--accent-purple);
+      color: var(--accent-orange);
       font-size: 0.85rem;
       margin-bottom: 0.5rem;
       text-transform: uppercase;
@@ -858,22 +841,11 @@
       border: 1px solid var(--card-border);
       border-radius: 8px;
       padding: 1.25rem;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 0.85rem;
+      font-family: var(--font-code);
+      font-size: 0.82rem;
       color: #e2e8f0;
       overflow-x: auto;
       margin-top: 1rem;
-    }
-
-    /* Equation style */
-    .math-block {
-      background: var(--bg-secondary);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-      text-align: center;
-      overflow-x: auto;
     }
 
     /* Timeline Section */
@@ -916,8 +888,8 @@
     }
 
     .timeline-item:nth-child(even)::after {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 10px var(--accent-purple-glow);
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 10px var(--accent-orange-glow);
     }
 
     .left {
@@ -948,7 +920,7 @@
     }
 
     .timeline-item:nth-child(even) .timeline-content:hover {
-      box-shadow: 0 10px 25px rgba(157, 78, 221, 0.05);
+      box-shadow: 0 10px 25px rgba(255, 107, 0, 0.05);
     }
 
     .timeline-phase {
@@ -961,7 +933,7 @@
     }
 
     .timeline-item:nth-child(even) .timeline-phase {
-      color: var(--accent-purple);
+      color: var(--accent-orange);
     }
 
     .timeline-title {
@@ -1010,7 +982,7 @@
     }
 
     .footer-link:hover {
-      color: var(--accent-cyan);
+      color: var(--accent-orange);
     }
 
     .footer-socials {
@@ -1027,7 +999,7 @@
     }
 
     .footer-icon-link:hover {
-      color: var(--accent-cyan);
+      color: var(--accent-orange);
       transform: scale(1.1);
     }
 
@@ -1058,7 +1030,8 @@
         gap: 2.5rem;
       }
       .role-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
       .sim-grid {
         grid-template-columns: 1fr;
@@ -1090,12 +1063,6 @@
       .hero-title {
         font-size: 2.5rem;
       }
-      .metrics-container {
-        grid-template-columns: 1fr;
-      }
-      .role-grid {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
@@ -1109,15 +1076,15 @@
   <header>
     <div class="container nav-container">
       <a href="#" class="logo">
-        <i class="fa-solid fa-cube"></i>
-        <span>Oraibot <span style="font-weight: 300; font-size: 0.9em; color: var(--text-secondary);">Twin</span></span>
+        <i class="fa-solid fa-robot"></i>
+        <span>Oraibot <span style="font-weight: 300; font-size: 0.9em; color: var(--text-secondary);">AMR</span></span>
       </a>
       <ul class="nav-menu">
         <li><a href="#overview" class="nav-link">개요</a></li>
-        <li><a href="#role" class="nav-link">담당 업무</a></li>
-        <li><a href="#sim" class="nav-link">시뮬레이션 데모</a></li>
+        <li><a href="#role" class="nav-link">담당 역할</a></li>
+        <li><a href="#sim" class="nav-link">라이브 데모</a></li>
         <li><a href="#troubleshooting" class="nav-link">트러블슈팅</a></li>
-        <li><a href="#evolution" class="nav-link">히스토리</a></li>
+        <li><a href="#evolution" class="nav-link">진화 과정</a></li>
       </ul>
       <a href="https://github.com/yjhyun0613/Oraibot" target="_blank" class="btn-github">
         <i class="fa-brands fa-github"></i> GitHub <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7em;"></i>
@@ -1131,30 +1098,30 @@
       <div class="hero-wrapper">
         <div class="hero-left">
           <div class="hero-tag">
-            <i class="fa-solid fa-circle-nodes"></i> ROS 2 + Firebase IoT Digital Twin
+            <i class="fa-solid fa-eye"></i> ROS 2 + YOLOv8 + Navigation Safety
           </div>
-          <h1 class="hero-title"><span class="gradient-text">Doosan Cobot</span><br>3D Dome Scanning System</h1>
+          <h1 class="hero-title"><span class="gradient-text">Oraibot AMR</span><br>Safety Security System</h1>
           <p class="hero-desc">
-            두산 협동로봇(M0609)의 순운동학 실시간 연산, Firebase 실시간 데이터 동기화, Plotly 3D 궤적 분석 및 통계적 품질 판정을 통합하여 구축한 차세대 스마트 돔 품질 모니터링 시스템입니다.
+            터틀봇 4(TurtleBot 4) 자율주행 환경에서 YOLOv8 GPU AI 인식 및 라이다(LiDAR) 스캔 필터 기술을 결합하여, 동적 장애물과 사람이 가득한 물류 환경에서도 사고 없는 자율 안전 주행을 구현하는 ROS 2 지능형 관제 시스템입니다.
           </p>
           <div class="hero-buttons">
-            <a href="#sim" class="btn-primary">시뮬레이션 테스트</a>
-            <a href="#overview" class="btn-secondary">프로젝트 개요</a>
+            <a href="#sim" class="btn-primary">시뮬레이션 가동</a>
+            <a href="#overview" class="btn-secondary">주요 기술 개요</a>
           </div>
         </div>
         <div class="hero-right">
           <!-- Interactive Widget -->
           <div class="arch-container" style="background: rgba(15, 17, 24, 0.4); backdrop-filter: blur(10px);">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
-              <span style="font-weight: 700; font-size:0.9rem; color:var(--accent-cyan);"><i class="fa-solid fa-microchip"></i> System Spec</span>
-              <span class="cloud-sync-status"><span class="sync-indicator active"></span> <span style="font-size:0.75rem; color:var(--text-secondary);">ROS2 Node Connected</span></span>
+              <span style="font-weight: 700; font-size:0.9rem; color:var(--accent-cyan);"><i class="fa-solid fa-microchip"></i> System Components</span>
+              <span class="cloud-sync-status"><span class="sync-indicator active"></span> <span style="font-size:0.75rem; color:var(--text-secondary);">Active Nodes: 3</span></span>
             </div>
             <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.85rem;">
-              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">로봇 모델</span><span style="color:var(--text-primary); font-weight:600;">Doosan M0609 (6축)</span></div>
-              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">자세 제어</span><span style="color:var(--text-primary); font-weight:600;">Hybrid Orientation (1:3)</span></div>
-              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">순응 제어</span><span style="color:var(--text-primary); font-weight:600;">Compliance Control (X축/Ry축)</span></div>
-              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">클라우드 DB</span><span style="color:var(--text-primary); font-weight:600;">Firebase RTDB & Storage</span></div>
-              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">UI 프레임워크</span><span style="color:var(--text-primary); font-weight:600;">Plotly.js Web Engine</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">기반 플랫폼</span><span style="color:var(--text-primary); font-weight:600;">ROS 2 Galactic / Humble</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">AI Vision 모듈</span><span style="color:var(--text-primary); font-weight:600;">YOLOv8 & OAK-D RGB-D</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">위험 회피 기구</span><span style="color:var(--text-primary); font-weight:600;">Active 60cm LiDAR Filter</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">주행 제어기</span><span style="color:var(--text-primary); font-weight:600;">Nav2 + Action Cancel / Resume</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">관제 GUI</span><span style="color:var(--text-primary); font-weight:600;">Threading Terminal Console</span></div>
             </div>
           </div>
         </div>
@@ -1163,20 +1130,20 @@
       <!-- Quick Metrics -->
       <div class="metrics-container">
         <div class="metric-card">
-          <div class="metric-value">99.8%</div>
-          <div class="metric-label">궤적 매핑 & 오차 감지 정밀도</div>
+          <div class="metric-value">30 FPS</div>
+          <div class="metric-label">YOLOv8 GPU 실시간 객체 추적</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">0.0%</div>
-          <div class="metric-label">특이점(Singularity) 발생 에러</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value">10 Hz</div>
-          <div class="metric-label">IoT 클라우드 실시간 전송 속도</div>
+          <div class="metric-value">&lt; 0.1s</div>
+          <div class="metric-label">장애물 감지 및 즉각 제동 시간</div>
         </div>
         <div class="metric-card">
           <div class="metric-value">100%</div>
-          <div class="metric-label">공중이동(Ghost Trace) 필터링</div>
+          <div class="metric-label">목적지 기억 및 자율 복구 성공률</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">0.20m</div>
+          <div class="metric-label">로봇 몸체(Chassis) 반사 제거 필터</div>
         </div>
       </div>
     </div>
@@ -1186,62 +1153,54 @@
   <section id="overview" class="section">
     <div class="container">
       <div class="section-title-wrapper">
-        <span class="section-tag">Overview</span>
-        <h2 class="section-title">프로젝트 개요</h2>
+        <span class="section-tag">AMR Architecture</span>
+        <h2 class="section-title">프로젝트 기술 개요</h2>
       </div>
       <div class="overview-grid">
         <div class="overview-text">
           <p>
-            제조 및 자동화 산업에서 구면 형태의 가공물이나 돔 형태의 구조물을 로봇으로 검사, 스캔하는 공정은 높은 정밀도와 안정성을 필요로 합니다.
+            기존의 자율주행 모바일 로봇(AMR)은 사전에 매핑된 지도를 기준으로만 이동하기 때문에, 갑작스럽게 동적인 장애물(사람, 떨어지는 상자)을 만났을 때 즉각 대처하지 못하거나 강제로 시스템이 종료되어 주행 흐름이 완전히 끊기는 한계가 있었습니다.
           </p>
           <p>
-            본 프로젝트는 <strong>두산 협동로봇(DSR-M0609)</strong>을 이용하여 돔 형상의 표면을 마찰이나 파손 없이 순응 제어(Compliance Control) 기법으로 미끄러지듯 스캔하고, 획득한 실시간 3D 위치 데이터를 클라우드 및 대시보드로 전달하여 원격 품질 분석을 가능하게 하는 <strong>디지털 트윈 기반 모니터링 시스템</strong>입니다.
+            <strong>오라이봇(Oraibot)</strong> 프로젝트는 터틀봇 4(TurtleBot 4) 플랫폼을 기반으로, <strong>YOLOv8 딥러닝 객체 검출</strong>과 <strong>라이다 센서 액티브 필터링</strong>을 융합하여 주행 흐름의 연속성을 유지하면서 충돌 위험을 원천 차단하는 지능형 안전 감시 솔루션을 개발했습니다.
           </p>
           <p>
-            수집된 실시간 궤적을 사전에 설계된 이상적인 돔 형상 데이터(Baseline)와 KDTree 데이터 구조를 통해 초고속으로 대조 연산하고, 5.0mm 이상의 오차가 발생한 비율(불량률)이 10.0%를 초과할 시 불량을 즉각 감지하여 리포트를 생성합니다.
+            위험물이 60cm 이내의 주행 경로 영역에 진입하면 로봇은 즉각적으로 Nav2 자율주행 명령을 보류(Cancel)하고, 몸체를 장애물 방향으로 틀어(Rotate) 위험 요소를 카메라 정면에 확보합니다. 관제 화면에 경고(Alert)를 발송하고 대기하다가, 위급 상황 해제 후 원터치 재개(`r`) 신호가 전달되면 이전 목적지를 다시 기억해내서 주행을 안전하게 이어갑니다.
           </p>
           
           <div class="overview-highlight">
-            <h4>"로컬 독립적 로봇 제어를 넘어 IoT 클라우드 플랫폼으로"</h4>
+            <h4>"위험 인지(YOLOv8) ➡️ 자율 제동/추적(LiDAR) ➡️ 관제 및 원터치 주행 재개"</h4>
             <p style="margin: 0; font-size: 0.95rem;">
-              로컬 PC 내부에서만 동작하던 로봇 감시 시뮬레이션을 원격 클라우드(Firebase Storage 및 Realtime Database)와 결합하고 웹에 최적화된 형태로 스트리밍하여, 원격에 있는 관리자가 현장의 품질 상태를 실시간 디지털 트윈으로 제어 및 감시할 수 있도록 확장하였습니다.
+              OAK-D 카메라의 RGB-D 뎁스 매핑 정보와 라이다 데이터를 병렬로 분석하여 다중 방어막을 형성하고, Nav2 액션 취소 서비스 및 `cmd_vel` 다이렉트 제어권을 획득하여 긴급 정지 및 지향성 감시 제어를 안전하게 구현했습니다.
             </p>
           </div>
         </div>
 
         <div class="overview-visual">
           <div class="arch-container">
-            <h3 style="border-bottom:1px solid var(--card-border); padding-bottom: 0.75rem; font-size: 1.25rem;"><i class="fa-solid fa-diagram-project" style="color:var(--accent-cyan);"></i> 데이터 파이프라인 아키텍처</h3>
+            <h3 style="border-bottom:1px solid var(--card-border); padding-bottom: 0.75rem; font-size: 1.25rem;"><i class="fa-solid fa-diagram-project" style="color:var(--accent-orange);"></i> ROS 2 노드 간 데이터 통신망</h3>
             
             <div class="arch-step">
-              <div class="arch-icon"><i class="fa-solid fa-robot"></i></div>
+              <div class="arch-icon"><i class="fa-solid fa-camera"></i></div>
               <div class="arch-content">
-                <h4>Doosan Cobot DRL (Spin Node)</h4>
-                <p>구면 자세 오일러 각 변환, 지그재그 회전, Compliance 탄성 제어 스캔</p>
+                <h4>YoloDetectionAlertNode (`yolo_detect_17.py`)</h4>
+                <p>OAK-D RGB-D 취득 ➡️ YOLOv8 CUDA 추론 ➡️ 3m 이내 사람 거리 추출 및 이벤트 상태(DETECTED / CLEAR) 발행</p>
               </div>
             </div>
 
             <div class="arch-step">
-              <div class="arch-icon"><i class="fa-solid fa-microchip"></i></div>
+              <div class="arch-icon"><i class="fa-solid fa-shield-halved"></i></div>
               <div class="arch-content">
-                <h4>ROS 2 Core (Kinematics & Monitoring)</h4>
-                <p>Joint States 수신 -> 정기구학 실시간 XYZ 좌표 변환 -> KDTree 최단오차 검출</p>
+                <h4>GoalManagerSafetyNode (`detect_threat_node_12.py`)</h4>
+                <p>Lidar 60cm 감지 ➡️ Nav2 Goal 강제 취소 ➡️ 목적지 좌표 캐싱 ➡️ 장애물 방향 90도 회전 ➡️ GUI 경보 전송</p>
               </div>
             </div>
 
             <div class="arch-step">
-              <div class="arch-icon"><i class="fa-solid fa-cloud"></i></div>
+              <div class="arch-icon"><i class="fa-solid fa-terminal"></i></div>
               <div class="arch-content">
-                <h4>Firebase Cloud Bridge (10Hz Throttling)</h4>
-                <p>checking_state & record_enable 이중 스위칭 필터링 적용, 실시간 RTDB 적재</p>
-              </div>
-            </div>
-
-            <div class="arch-step">
-              <div class="arch-icon"><i class="fa-solid fa-chart-line"></i></div>
-              <div class="arch-content">
-                <h4>Web Digital Twin Dashboard (Plotly.js)</h4>
-                <p>extendTraces 적용 60FPS 실시간 3D 궤적 렌더링, 클라우드 불량 리포트 뷰어</p>
+                <h4>TerminalGUINode (`detect_threat_gui_node_01.py`)</h4>
+                <p>멀티스레드 키보드 감시 ➡️ 'r' 입력 시 resume_cmd 토픽 전송 ➡️ 안전 노드에서 목적지 재발행 및 주행 자동 재개</p>
               </div>
             </div>
 
@@ -1255,64 +1214,50 @@
   <section id="role" class="section">
     <div class="container">
       <div class="section-title-wrapper">
-        <span class="section-tag">My Contributions</span>
-        <h2 class="section-title">핵심 개발 및 담당 역할</h2>
+        <span class="section-tag">Core Development</span>
+        <h2 class="section-title">내가 담당한 역할 및 구현 사항</h2>
       </div>
       <div class="role-grid">
         
         <div class="role-card">
-          <div class="role-icon-box"><i class="fa-solid fa-gauge-high"></i></div>
-          <h3 class="role-title">로봇 제어 DRL 최적화</h3>
+          <div class="role-icon-box"><i class="fa-solid fa-brain"></i></div>
+          <h3 class="role-title">YOLOv8 AI 객체 검출 노드</h3>
           <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-            Doosan Robot Language를 직접 개발하고 수학적 자세 제어 및 충돌 방지 로직을 최적화했습니다.
+            OAK-D RGB-D 하드웨어를 활용하여 주행 경로 주변의 동적 위협물(사람)을 실시간으로 추적하는 AI Vision 파이프라인을 구축했습니다.
           </p>
           <ul>
-            <li><i class="fa-solid fa-circle-dot"></i> 구면 삼각 함수 기반 동적 궤적 생성</li>
-            <li><i class="fa-solid fa-circle-dot"></i> 1:3 비율의 하이브리드 자세 제어(Orientation)</li>
-            <li><i class="fa-solid fa-circle-dot"></i> stiff 세부 조정 및 Compliance 제어 구현</li>
-            <li><i class="fa-solid fa-circle-dot"></i> 가압 오프셋(2~4mm) 실측 궤적 보정</li>
+            <li><i class="fa-solid fa-circle-dot"></i> YOLOv8n GPU 추론 모델 CUDA 포팅</li>
+            <li><i class="fa-solid fa-circle-dot"></i> RGB 픽셀 좌표와 Depth 매트릭스 1:1 결합</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 3.0m 이내 타겟 절대 거리(Depth) 실시간 계산</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 1.0s의 복구 지연(Clear Patience) 필터 설계</li>
           </ul>
         </div>
 
         <div class="role-card">
-          <div class="role-icon-box"><i class="fa-solid fa-microchip"></i></div>
-          <h3 class="role-title">실시간 모니터링 노드</h3>
+          <div class="role-icon-box"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <h3 class="role-title">LiDAR 정밀 감지 및 로봇 제어</h3>
           <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-            ROS 2 C++ / Python 환경에서 로봇 관절 각도로부터 오차를 실시간으로 통계 연산했습니다.
+            장애물이 가로막았을 때 로봇을 비상 정지하고, 자율주행 목표를 중단한 뒤 장애물 방향으로 정밀 조향하는 융합 노드를 개발했습니다.
           </p>
           <ul>
-            <li><i class="fa-solid fa-circle-dot"></i> DH Parameter 기반 6축 동차 변환</li>
-            <li><i class="fa-solid fa-circle-dot"></i> SciPy KDTree 적용 3차원 최단 오차 연산</li>
-            <li><i class="fa-solid fa-circle-dot"></i> 오차값 컬러맵핑 3D HTML 자동 생성</li>
-            <li><i class="fa-solid fa-circle-dot"></i> 통계적 불량률 임계치 판정 및 토픽 발행</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 로봇 범퍼 반사 노이즈 차단 (20cm 이하 필터)</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Nav2 Cancel Goal 클라이언트(Action Cancel) 구현</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 라이다(Lidar) -> 로봇 몸체 기준(TF) 각도 보정 (-90도)</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 비동기 타이머 기반 정교한 각속도(Yaw) 회전 제어</li>
           </ul>
         </div>
 
         <div class="role-card">
-          <div class="role-icon-box"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-          <h3 class="role-title">IoT 클라우드 파이프라인</h3>
+          <div class="role-icon-box"><i class="fa-solid fa-clipboard-check"></i></div>
+          <h3 class="role-title">주행 기억 & 원격 복구 파이프라인</h3>
           <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-            로봇 통신 노이즈와 트래픽 부하를 방지하기 위해 클라우드 연결 아키텍처를 최적화했습니다.
+            로봇의 주행 목적지가 강제 취소되어 소실되는 것을 막고, 관제자의 판단 하에 즉각 복구할 수 있는 네트워크를 연결했습니다.
           </p>
           <ul>
-            <li><i class="fa-solid fa-circle-dot"></i> 10Hz 데이터 스로틀링(Throttling) 제어</li>
-            <li><i class="fa-solid fa-circle-dot"></i> checking + record_enable 이중 필터링</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Firebase RTDB 상태 동기화 노드 개발</li>
-            <li><i class="fa-solid fa-circle-dot"></i> 불량 발생 시 Firebase Storage 연동 업로드</li>
-          </ul>
-        </div>
-
-        <div class="role-card">
-          <div class="role-icon-box"><i class="fa-solid fa-tv"></i></div>
-          <h3 class="role-title">디지털 트윈 대시보드</h3>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-            웹 브라우저에서 렉 없이 로봇 움직임을 입체 렌더링하기 위한 프론트엔드 최적화를 수행했습니다.
-          </p>
-          <ul>
-            <li><i class="fa-solid fa-circle-dot"></i> Plotly.js 기반 Baseline / Live 듀얼 드로잉</li>
-            <li><i class="fa-solid fa-circle-dot"></i> extendTraces API 적용 프레임 레이트 60fps</li>
-            <li><i class="fa-solid fa-circle-dot"></i> (0,0,0) 원점 튀김 노이즈 디펜스 필터</li>
-            <li><i class="fa-solid fa-circle-dot"></i> 스캔 완료 시 이전 궤적 자동 클리어</li>
+            <li><i class="fa-solid fa-circle-dot"></i> RViz2 / 맵 기준 목적지 좌표(/goal_pose) 캐싱</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 멀티스레드 기반 입력 감시 GUI 터미널 개발</li>
+            <li><i class="fa-solid fa-circle-dot"></i> resume_cmd 입력 시 캐싱 좌표 Nav2 재전송</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 통신 큐 병목 차단을 위한 최적 QoS 설정 적용</li>
           </ul>
         </div>
 
@@ -1324,75 +1269,66 @@
   <section id="sim" class="section">
     <div class="container">
       <div class="section-title-wrapper">
-        <span class="section-tag">Interactive Demo</span>
-        <h2 class="section-title">실시간 디지털 트윈 시뮬레이터</h2>
+        <span class="section-tag">2D Grid Simulation</span>
+        <h2 class="section-title">AMR 액티브 세이프티 라이브 데모</h2>
       </div>
       
       <div class="sim-grid">
-        <!-- 3D Plotly Visualizer -->
+        <!-- 2D Canvas Viewport -->
         <div class="sim-viewport">
-          <div style="position: absolute; top: 1.5rem; left: 1.5rem; z-index: 10; display:flex; gap:0.5rem; align-items:center;">
-            <i class="fa-solid fa-cube" style="color: var(--accent-cyan);"></i>
-            <span style="font-size: 0.85rem; font-weight: 700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-primary);">3D Live Scan Monitor</span>
-          </div>
-          <div id="plotly-div"></div>
+          <canvas id="sim-canvas" width="580" height="400"></canvas>
         </div>
 
         <!-- Control Panel -->
         <div class="sim-controls-panel">
           <div>
-            <h4 style="font-size:1.2rem; margin-bottom:0.5rem;"><i class="fa-solid fa-sliders" style="color:var(--accent-purple);"></i> 시뮬레이터 컨트롤러</h4>
-            <p style="font-size:0.8rem; color:var(--text-secondary);">로봇의 구면 스캔 동작 및 오차 감지 알고리즘을 테스트할 수 있는 실시간 디지털 트윈 모의 장치입니다.</p>
+            <h4 style="font-size:1.2rem; margin-bottom:0.5rem;"><i class="fa-solid fa-terminal" style="color:var(--accent-orange);"></i> 터틀봇 AMR 관제 콘솔</h4>
+            <p style="font-size:0.8rem; color:var(--text-secondary);">로봇의 LiDAR 60cm 비상 제동 및 장애물 지향 정지, GUI `RESUME` 재배포 기능 시뮬레이션입니다.</p>
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size: 0.9rem; font-weight:600;">현재 노드 상태:</span>
+            <span style="font-size: 0.9rem; font-weight:600;">AMR 로봇 상태:</span>
             <span id="sim-status" class="sim-status-badge status-idle">IDLE</span>
           </div>
 
-          <div class="sim-stats-list">
-            <div class="sim-stat-row">
-              <span class="sim-stat-label">TCP 좌표 (X, Y, Z)</span>
-              <span class="sim-stat-value" id="sim-coord">- / - / -</span>
+          <div class="sim-stats-grid">
+            <div class="sim-stat-item">
+              <span class="sim-stat-lbl">로봇 속도 (X, Yaw)</span>
+              <span class="sim-stat-val" id="stat-vel">0.0 m/s, 0.0 rad/s</span>
             </div>
-            <div class="sim-stat-row">
-              <span class="sim-stat-label">실시간 오차 (Deviation)</span>
-              <span class="sim-stat-value" id="sim-error">- mm</span>
+            <div class="sim-stat-item">
+              <span class="sim-stat-lbl">최근 장애물 거리 (LiDAR)</span>
+              <span class="sim-stat-val" id="stat-dist">CLEARED</span>
             </div>
-            <div class="sim-stat-row">
-              <span class="sim-stat-label">스캔 데이터 누적 개수</span>
-              <span class="sim-stat-value" id="sim-points">0 / 150</span>
+            <div class="sim-stat-item">
+              <span class="sim-stat-lbl">YOLOv8 인간 감지</span>
+              <span class="sim-stat-val" id="stat-yolo">CLEAR</span>
             </div>
-            <div class="sim-stat-row">
-              <span class="sim-stat-label">불량 포인트 검출 수</span>
-              <span class="sim-stat-value" id="sim-defects">0</span>
-            </div>
-            <div class="sim-stat-row">
-              <span class="sim-stat-label">실시간 불량률</span>
-              <span class="sim-stat-value" id="sim-fail-rate">0.0 %</span>
-            </div>
-            <div class="sim-stat-row">
-              <span class="sim-stat-label">종합 판정 결과</span>
-              <span class="sim-stat-value" id="sim-decision" style="font-weight:800;">WAITING</span>
+            <div class="sim-stat-item">
+              <span class="sim-stat-lbl">목적지 기억 장치</span>
+              <span class="sim-stat-val" id="stat-goal">EMPTY</span>
             </div>
           </div>
 
+          <!-- Mock Terminal Console -->
+          <div class="terminal-console" id="terminal-screen">
+            <div class="term-line term-system">[System] Oraibot ROS 2 Node initialized.</div>
+            <div class="term-line term-system">[System] Safety range: 20cm - 60cm, YOLOv8: Active (CUDA).</div>
+            <div class="term-line term-system">[System] Ready to Navigate. Click "주행 목표 지정" below.</div>
+          </div>
+
           <div class="sim-buttons-stack">
-            <button class="btn-sim btn-sim-start" id="btn-start-scan">
-              <i class="fa-solid fa-play"></i> 스캔 시뮬레이션 시작
+            <button class="btn-sim btn-sim-start" id="btn-start-nav">
+              <i class="fa-solid fa-location-crosshairs"></i> 주행 목표 지정 (Rviz)
             </button>
-            <button class="btn-sim btn-sim-defect" id="btn-toggle-defect">
-              <i class="fa-solid fa-circle-exclamation"></i> 오차(불량) 인위적 유도 [OFF]
+            <button class="btn-sim btn-sim-resume" id="btn-resume" disabled>
+              <i class="fa-solid fa-reply"></i> 관제 'r' 입력 (RESUME)
             </button>
           </div>
 
           <div class="cloud-sync-status" style="justify-content:center;">
-            <span class="sync-indicator" id="sync-dot"></span>
-            <span style="font-size:0.75rem; color:var(--text-secondary);" id="sync-text">Firebase Cloud: Connection Standby</span>
-          </div>
-
-          <div class="report-link-box" id="report-box">
-            <a href="#" id="report-url" target="_blank"><i class="fa-solid fa-file-invoice"></i> Firebase Storage에 업로드된 리포트 열기 <i class="fa-solid fa-up-right-from-square" style="font-size: 0.8em;"></i></a>
+            <span class="sync-indicator active" id="sync-dot"></span>
+            <span style="font-size:0.75rem; color:var(--text-secondary);" id="sync-text">ROS 2 DDS: /robot5/scan (Active)</span>
           </div>
 
         </div>
@@ -1415,23 +1351,23 @@
         <div class="trouble-tabs">
           <div class="trouble-tab active" data-target="t1">
             <div class="trouble-tab-num">01</div>
-            <div class="trouble-tab-title">6번 관절 꼬임 및 특이점(Gimbal Lock) 에러</div>
+            <div class="trouble-tab-title">Nav2 구동 중 cmd_vel 전송 시 씹힘 현상</div>
           </div>
           <div class="trouble-tab" data-target="t2">
             <div class="trouble-tab-num">02</div>
-            <div class="trouble-tab-title">층간 이동 시 모션 딜레이 및 버벅거림</div>
+            <div class="trouble-tab-title">라이다 감지 각도와 로봇 실제 회전 정렬 오차</div>
           </div>
           <div class="trouble-tab" data-target="t3">
             <div class="trouble-tab-num">03</div>
-            <div class="trouble-tab-title">로봇 헤드 충돌 및 돔 표면 파손 위험</div>
+            <div class="trouble-tab-title">YOLOv8 CPU 연산 처리 지연 및 제어 지연</div>
           </div>
           <div class="trouble-tab" data-target="t4">
             <div class="trouble-tab-num">04</div>
-            <div class="trouble-tab-title">웹 대시보드 내 공중 이동 '허공 거미줄' 궤적</div>
+            <div class="trouble-tab-title">로봇 몸체(Chassis) 부품 인식 오작동</div>
           </div>
           <div class="trouble-tab" data-target="t5">
             <div class="trouble-tab-num">05</div>
-            <div class="trouble-tab-title">일시적 오프셋 감지 시 강제 비상 정지 문제</div>
+            <div class="trouble-tab-title">Nav2 취소 시 목적지 데이터 증발 문제</div>
           </div>
         </div>
 
@@ -1440,157 +1376,158 @@
           
           <!-- Panel 1 -->
           <div class="trouble-panel active" id="t1">
-            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-arrows-spin" style="color:var(--accent-cyan);"></i> 6번 관절 꼬임 및 특이점(Gimbal Lock) 에러</h3>
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-road-barrier" style="color:var(--accent-orange);"></i> Nav2 구동 중 cmd_vel 전송 시 씹힘 현상</h3>
             
             <div class="trouble-meta-grid">
               <div class="trouble-meta-card">
                 <h5>발생 현상 (Symptom)</h5>
-                <p>구면 표면을 지속적으로 돌며 스캔할 때, 6번 손목 관절 각도가 한계치에 다다르거나 오일러 각 변환 도중 특이점(Singularity)에 빠져 로봇이 중간에 구동을 멈추고 뻗는 현상.</p>
+                <p>라이다 센서가 장애물을 감지하여 `cmd_vel` 토픽으로 정지(0,0,0) 속도를 계속 전송했음에도 불구하고 로봇이 정지하지 않고 계속 목표치를 향해 주행하는 충돌 위험 상황 발생.</p>
               </div>
               <div class="trouble-meta-card">
                 <h5>원인 분석 (Root Cause)</h5>
-                <p>로봇이 한쪽 방향으로만 회전하면 관절 꼬임이 누적됩니다. 또한 툴의 방향 벡터를 RX, RY, RZ 오일러 각으로 단순히 매핑 시, 수학적으로 분모가 0이 되어 무한대 회전 명령이 생성됩니다.</p>
+                <p>Nav2의 내장 로컬 플래너(Controller Server)가 실시간으로 계속 주행 속도를 계산하여 발행하기 때문에, 사용자가 발행하는 제동용 `cmd_vel` 토픽이 뒤섞여 씹히는 현상이 원인이었습니다.</p>
               </div>
             </div>
 
             <div class="trouble-solution-box">
               <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
               <p>
-                <strong>① 지그재그 회전 방식 도입:</strong> 홀수 층은 시계 방향(CW), 짝수 층은 반시계 방향(CCW)으로 돌도록 DRL을 지그재그 패턴으로 설계하여 이전 층에서 꼬인 관절을 다음 층에서 스스로 풀도록 유도했습니다.
-              </p>
-              <p>
-                <strong>② Z-Y-Z 오일러 각 변환(rot_to_zyz) 및 짐벌락 방어:</strong> Direct 6축 매핑 대신 회전 행렬을 오일러각으로 변환하는 수식을 DRL 내부에 직접 이식하고, 특이값 영역을 선제적으로 예외 처리하는 코드를 삽입했습니다.
+                <strong>Nav2 액션 강제 취소 및 override 채널 생성:</strong> 장애물 검출 시 즉각적으로 Nav2의 목표 주행 액션 취소 서비스 클라이언트(<code>navigate_to_pose/_action/cancel_goal</code>)를 호출하여 자율주행 스케줄을 완전 취소시킴과 동시에 로봇에 0 속도를 다이렉트로 전송하여 제동 제어권을 즉각 획득하도록 개선했습니다.
               </p>
               <div class="code-snippet">
-# rot_to_zyz 함수 적용 예외 필터링 예시
-if abs(r22) > 0.9999: # 짐벌락 검출 시
-    ay = 0.0
-    az = math.atan2(-r01, r00)
-else:
-    ay = math.atan2(math.sqrt(r02**2 + r12**2), r22)
-    az = math.atan2(r12, -r02)
-# 홀/짝수 층별 CW/CCW rz 시작각 교차 분배로 리미트 방어
+# Nav2 주행 강제 취소 서비스 클라이언트 연결 및 비동기 호출
+self.cancel_client = self.create_client(CancelGoal, '/robot5/navigate_to_pose/_action/cancel_goal')
+if self.cancel_client.wait_for_service(timeout_sec=1.0):
+    req = CancelGoal.Request()
+    self.cancel_client.call_async(req)
+    self.teleop_pub.publish(Twist()) # 즉시 제동 강제 발행
               </div>
             </div>
           </div>
 
           <!-- Panel 2 -->
           <div class="trouble-panel" id="t2">
-            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-bolt" style="color:var(--accent-purple);"></i> 층간 이동 시 모션 딜레이 및 버벅거림</h3>
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-compass" style="color:var(--accent-cyan);"></i> 라이다 감지 각도와 로봇 실제 회전 정렬 오차</h3>
             
             <div class="trouble-meta-grid">
               <div class="trouble-meta-card">
                 <h5>발생 현상 (Symptom)</h5>
-                <p>스캔 중 층(Layer)을 이동할 때마다 로봇이 공중에서 완전히 정지했다가 다음 목표 좌표를 향해 가속하여 속도가 급격하게 저하되고 덜컥거리는 현상.</p>
+                <p>장애물이 있는 라이다 인덱스 각도를 추출하여 로봇을 회전시켰으나, 엉뚱한 허공 방향으로 회전하며 장애물 정면에 카메라를 맞추지 못하는 문제.</p>
               </div>
               <div class="trouble-meta-card">
                 <h5>원인 분석 (Root Cause)</h5>
-                <p>이전 스크립트에서는 로봇의 다음 명령이 전달되기 전에 <code>wait_for_idle()</code>로 완전 정지 대기 상태를 가졌으며, DRL 모션 큐에 연속적으로 위치 데이터가 들어가지 않아 발생한 문제였습니다.</p>
+                <p>로봇의 기준 프레임(base_link)과 라이다의 고정 위치 프레임(laser_link) 간의 오프셋(예: 터틀봇4의 경우 센서가 정면 기준 시계방향 90도 회전되어 장착됨) 및 라디안 각도의 오버플로우 처리가 미비했기 때문입니다.</p>
               </div>
             </div>
 
             <div class="trouble-solution-box">
               <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
               <p>
-                <strong>논스톱 모션 블렌딩(Non-stop Blending):</strong> 강제 동기화 대기를 전면 삭제하고, 두산 DRL의 <code>movel</code> 명령어에 블렌딩 반경 옵션(<code>r=15.0</code>)을 추가하여 목표 좌표 지점을 통과할 때 속도를 줄이지 않고 부드러운 곡선 궤적으로 흘러가도록 제어 아키텍처를 변경했습니다.
+                <strong>TF 각도 정규화 보정 적용:</strong> 획득한 라이다 장애물 데이터의 인덱스 라디안 값에 좌표계 변환 계수(<code>-90도</code>)를 보정하고, 계산된 값이 180도($\pi$) 경계를 지나면서 각도가 튀어 오르는 것을 막기 위해 <code>atan2(sin, cos)</code> 공식을 이식하여 360도 전 영역에서의 각도를 완벽하게 정형화했습니다.
               </p>
               <div class="code-snippet">
-# 층간 이동 시 블렌딩 적용 DRL 생성 로직
-# movel(target_point, v=veloc, a=accel, r=15.0)
-# wait_for_idle() 제거 -> DRL 모션 버퍼 큐에 연속 push
+# 라이다 tf -> 터틀봇 base_link tf 보정 (-90도)
+robot_target_angle = angle_lidar - math.radians(90)
+# 각도를 -pi ~ pi 사이로 강제 정규화하여 회전각 튐 방지
+robot_target_angle = math.atan2(math.sin(robot_target_angle), math.cos(robot_target_angle))
+# 목표 소요 시간 계산
+self.angular_speed = 0.5 if robot_target_angle > 0 else -0.5 
+self.rotation_duration = abs(robot_target_angle) / abs(self.angular_speed)
               </div>
             </div>
           </div>
 
           <!-- Panel 3 -->
           <div class="trouble-panel" id="t3">
-            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> 로봇 헤드 충돌 및 돔 표면 파손 위험</h3>
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-brain" style="color:var(--accent-orange);"></i> YOLOv8 CPU 연산 처리 지연 및 제어 지연</h3>
             
             <div class="trouble-meta-grid">
               <div class="trouble-meta-card">
                 <h5>발생 현상 (Symptom)</h5>
-                <p>수학적 계산상의 3D 구면 좌표와 실제 플라스틱 돔의 물리적 위치가 미세하게 다를 경우, 로봇 헤드가 돔 표면을 과하게 찍어 눌러 파손되거나 스캐너가 들뜨는 문제.</p>
+                <p>웹캠/OAK-D 영상을 받아 YOLOv8 딥러닝 추론을 돌릴 때 로봇 싱글 스레드 블로킹이 일어나 주행 정지 명령이 0.5초 이상 늦게 전달되어 안전 정지 기능에 중대한 위협이 발생함.</p>
               </div>
               <div class="trouble-meta-card">
                 <h5>원인 분석 (Root Cause)</h5>
-                <p>이상적인 원(Sphere) 구동은 로봇 툴을 완벽히 딱딱한 물리적 벽(Hard Constraint)으로 구동하므로, 실제 조립 공차나 곡면 오차(1~2mm)가 존재할 경우 과도한 힘이 작용하게 됩니다.</p>
+                <p>라이다 콜백 및 이미지 콜백이 파이썬의 싱글 글로벌 락(GIL) 스레드에 묶여 순차 처리되면서, 약 200~300ms가 소요되는 YOLOv8 CPU 추론 작업이 제어 명령 실행을 가로막았습니다.</p>
               </div>
             </div>
 
             <div class="trouble-solution-box">
               <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
               <p>
-                <strong>순응 제어(Compliance Control) 및 가압 오프셋 적용:</strong> DRL 내부에서 힘 제어 모드(<code>task_compliance_ctrl</code>)를 가동하여 로봇 헤드에 가상의 스프링 강성(Stiffness)을 부여했습니다. 특히 돔 구면에 접촉하는 방향의 강성을 50으로 유연하게 주어, 로봇이 돔의 표면 오차에 맞춰 흐물거리며 쓸고 지나가도록 구현했습니다. 더불어 목표 궤적을 돔 안쪽으로 2~4mm 가압(Press) 삽입하여 일정한 접촉력이 항상 작용하게 만들었습니다.
+                <strong>CUDA GPU 가속화 및 ROS 2 멀티스레드 큐 아키텍처 구현:</strong> YOLOv8 모델 추론 시 CUDA GPU 연산(<code>.to('cuda')</code>)을 활성화시켜 지연 속도를 10ms 단위로 단축시켰습니다. 추가적으로, 이미지 획득과 제어 명령 통신 루프를 별도의 독점 스레드 콜백 그룹(MutuallyExclusiveCallbackGroup)과 <code>Queue(maxsize=1)</code> 버퍼로 분리하여 메인 제어 루프의 프레임 저하를 원천 차단했습니다.
               </p>
               <div class="code-snippet">
-# 순응제어 (X축: 50의 부드러운 힘, Z축: 300의 강성)
-stiff = [50, 3000, 300, 300, 50, 300]
-task_compliance_ctrl(stiff)
-# 가압 오프셋 적용 궤적 계산
-r_pressed = ACTUAL_RADIUS - PRESS_OFFSET # 돔 안쪽으로 약간 진입
+# CUDA 디바이스 이식 및 비동기 큐 처리
+self.model = YOLO('yolov8n.pt').to('cuda')
+self.image_queue = Queue(maxsize=1)
+# 스레드 분리
+self.thread = threading.Thread(target=self.detection_loop, daemon=True)
               </div>
             </div>
           </div>
 
           <!-- Panel 4 -->
           <div class="trouble-panel" id="t4">
-            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-network-wired" style="color:var(--accent-purple);"></i> 웹 대시보드 내 공중 이동 '허공 거미줄' 궤적</h3>
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> 로봇 몸체(Chassis) 부품 인식 오작동</h3>
             
             <div class="trouble-meta-grid">
               <div class="trouble-meta-card">
                 <h5>발생 현상 (Symptom)</h5>
-                <p>웹상의 3D 디지털 트윈 화면에 돔 형태의 깔끔한 스캔 궤적만 남아야 하는데, 로봇이 층을 바꿀 때나 홈 포지션에서 진입할 때 공중을 거쳐 이동하는 불필요한 직선 데이터가 거미줄처럼 그려져 시인성이 극도로 저하되는 현상.</p>
+                <p>로봇이 정면에 장애물이 전혀 없고 주변이 텅 빈 실내 구역임에도 불구하고 수시로 "장애물 발생"으로 급제동하며 주행을 거부하는 현상.</p>
               </div>
               <div class="trouble-meta-card">
                 <h5>원인 분석 (Root Cause)</h5>
-                <p>단순히 전체 구동 스위치(<code>checking_state</code>) 토픽만 구독하여 Firebase로 데이터를 보냈기 때문에, 로봇이 허공에 떠 있는 상태에서도 좌표 전송이 멈추지 않고 중계되었기 때문입니다.</p>
+                <p>라이다 센서의 360도 레이저 빔 중 일부가 로봇 본체(섀시)나 상단에 설치된 액세서리에 부딪혀 반사되면서, 5~10cm 수준의 매우 가까운 고스트 장애물로 감지되었던 것이 원인이었습니다.</p>
               </div>
             </div>
 
             <div class="trouble-solution-box">
               <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
               <p>
-                <strong>이중 스위치(Dual-Switch) 통제 방식 적용:</strong> 로봇 스캔이 활성화되었음을 뜻하는 <code>checking_state</code>와 실제 돔 표면에 완전히 달라붙어 밀착 궤적 이동 중일 때만 `True`가 되는 <code>record_enable</code> 토픽을 새롭게 정의했습니다. Firebase 중계 노드는 두 스위치가 동시에 `True`인 순간의 좌표만 선별하여 클라우드로 쏩니다.
+                <strong>최소 유효 수집 거리(Cut-off) 필터 설정:</strong> 로봇 중심 원점으로부터 자신의 몸체 반경인 20cm 미만의 센싱 데이터를 무시하고 제거하는 안전 컷오프(<code>self.min_distance = 0.20</code>) 로직을 이식하여 로봇 내부에서 자체 발생한 고스트 반사 신호를 완벽하게 필터링했습니다.
               </p>
               <div class="code-snippet">
-# Firebase 데이터 중계 제어 로직 (이중 스위치)
-def joint_states_callback(self, msg):
-    if self.checking_state and self.record_enable:
-        # 10Hz 스로틀링 연산 수행 후 Firebase push
-        self.send_to_firebase(xyz_coords)
+# Lidar 수집 범위 중 20cm 이하 극단거리는 로봇 몸체로 판정하여 제외
+self.min_distance = 0.20 # 20cm (차체 노이즈 차단)
+self.max_distance = 0.60 # 60cm (비상 정지 유효 영역)
+
+for i, dist in enumerate(msg.ranges):
+    if self.min_distance < dist < self.max_distance:
+        # 이 범위에 들 때만 진짜 장애물로 통계 처리
               </div>
             </div>
           </div>
 
           <!-- Panel 5 -->
           <div class="trouble-panel" id="t5">
-            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-shield-cat" style="color:var(--accent-cyan);"></i> 일시적 오프셋 감지 시 강제 비상 정지 문제</h3>
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-sd-card" style="color:var(--accent-orange);"></i> Nav2 취소 시 목적지 데이터 증발 문제</h3>
             
             <div class="trouble-meta-grid">
               <div class="trouble-meta-card">
                 <h5>발생 현상 (Symptom)</h5>
-                <p>검사 중 노이즈나 통신 진동으로 인해 1개의 포인트만 5.0mm 오차 범위를 넘어서도 로봇 시스템이 강제로 비상 정지하며 연속 작업이 불가능해지는 치명적인 정지 오버헤드 발생.</p>
+                <p>장애물 발생 시 비상 브레이크 작동 및 Nav2 명령 취소는 성공했으나, 장애물이 치워진 뒤 로봇이 원래 어디로 향하고 있었는지 그 목적지를 잃어버려 자율 재주행이 불가능했던 현상.</p>
               </div>
               <div class="trouble-meta-card">
                 <h5>원인 분석 (Root Cause)</h5>
-                <p>초기 버전(`monitoring_00.py`)에서는 실시간 오차가 임계치 이상으로 뛰는 즉시 로봇에 강제 정지 서비스(stop)를 요청하도록 코드가 설계되어 일시적 신호 튀어오름에 지나치게 방어적이었습니다.</p>
+                <p>Nav2의 내장 스택은 <code>CancelGoal</code> 신호를 받는 즉시 현재의 Plan을 메모리에서 해제하여 메모리 초기화를 시키므로 로봇 입장에서 복귀 타겟이 사라지게 되는 구조였습니다.</p>
               </div>
             </div>
 
             <div class="trouble-solution-box">
               <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
               <p>
-                <strong>통계적 사후 불량 판정(Post-Scan Statistical Analysis):</strong> 즉시 제어 개입을 삭제하고, 로봇이 돔의 전체 층을 돌아 스캔을 종료할 때까지 궤적 좌표들을 누적 수집하도록 변경했습니다. 스캔이 정상적으로 끝난 뒤 전체 포인트 중 오차가 5.0mm를 넘긴 '불량 포인트의 비율(%)'을 연산하고, 해당 불량률이 10.0% 임계치를 넘을 때만 최종적 `FAIL` 판정을 내리도록 모니터링 분석 알고리즘을 혁신했습니다.
+                <strong>이벤트 기반 목적지 캐싱 및 재배포 장치 구현:</strong> 사용자가 Rviz나 관제 프로그램에서 목표 좌표(PoseStamped)를 지정하는 `/robot5/goal_pose` 토픽 채널을 백그라운드에서 상시 감시하여 별도의 로컬 캐시 변수(<code>self.saved_goal</code>)에 백업해 두도록 로직을 추가했습니다. 주행 재개(`RESUME`) 신호가 전달되면 이 캐시 변수로부터 목적지 좌표를 그대로 가져와 다시 릴레이 재발행함으로써 자율 주행의 연속성을 되살려 냈습니다.
               </p>
               <div class="code-snippet">
-# 사후 판정 알고리즘
-fail_points = np.sum(errors > 5.0)
-fail_rate = (fail_points / total_points) * 100.0
+# 목표 데이터 가로채기형 캐시 저장
+def goal_callback(self, msg):
+    self.saved_goal = msg # 복구용 캐시
 
-if fail_rate > 10.0:
-    self.inspection_result = "FAIL"
-else:
-    self.inspection_result = "PASS"
+# GUI 복구 명령 시
+def resume_callback(self, msg):
+    if msg.data == "RESUME" and self.saved_goal:
+        self.goal_pub.publish(self.saved_goal) # 목적지 자동 재전송!
               </div>
             </div>
           </div>
@@ -1601,65 +1538,66 @@ else:
     </div>
   </section>
 
-  <!-- Evolution Section (Timeline) -->
+  <!-- Evolution Section -->
   <section id="evolution" class="section">
     <div class="container">
       <div class="section-title-wrapper">
-        <span class="section-tag">Version History</span>
-        <h2 class="section-title">시스템 진화 과정 및 기록</h2>
+        <span class="section-tag">Development Phases</span>
+        <h2 class="section-title">Oraibot 안전 모듈의 진화 과정</h2>
       </div>
 
       <div class="timeline">
         
         <div class="timeline-item left">
           <div class="timeline-content">
-            <div class="timeline-phase">Phase 1 (v00 ~ v01)</div>
-            <h3 class="timeline-title">기초 데이터 수집 및 물리 셋팅</h3>
+            <div class="timeline-phase">Phase 1: 단순 멈춤 및 Lidar 초기화</div>
+            <h3 class="timeline-title">detect_threat_00 ~ 02.py</h3>
             <p class="timeline-desc">
-              로봇 끝단의 직교 좌표를 기구학 연산으로 가져와 Numpy 배열로 로컬에 기록하고, 최초의 로봇 제어 순응 제어 및 툴 오프셋(Z축) 보정을 수립했습니다.
+              기본적인 ROS 2 구독자를 열어 Lidar 데이터를 분석하고, 20cm~60cm 이내의 범위에 장애물이 찍히는 순간 cmd_vel을 0으로 쏘아 멈추는 가장 단순한 형태의 안전 브레이크를 프로토타이핑했습니다.
             </p>
-            <span class="timeline-badge">Forward Kinematics</span>
-            <span class="timeline-badge">Numpy baseline.npy</span>
-            <span class="timeline-badge">Tool Length Offset</span>
+            <span class="timeline-badge">LaserScan Subscribe</span>
+            <span class="timeline-badge">cmd_vel Emergency Stop</span>
+            <span class="timeline-badge">Local test</span>
           </div>
         </div>
 
         <div class="timeline-item right">
           <div class="timeline-content">
-            <div class="timeline-phase">Phase 2 (v02 ~ v03)</div>
-            <h3 class="timeline-title">궤적 시각화의 도입</h3>
+            <div class="timeline-phase">Phase 2: 비상 제어 및 90도 TF 정렬 도입</div>
+            <h3 class="timeline-title">detect_threat_node_01 ~ 04.py</h3>
             <p class="timeline-desc">
-              단순 배열 저장에서 탈피하여 궤적 왜곡율을 막기 위해 1:1:1 종횡비를 맞춘 3D 그래프 PNG 이미지로 저장하기 시작했으며, 이어서 회전/줌인이 가능한 Plotly.js 대화형 리포트의 뼈대를 구현했습니다.
+              단순 cmd_vel 송신으로는 자율주행 엔진(Nav2)의 속도 발행 주기를 이길 수 없음을 발견하고, Action Goal 취소 클라이언트를 이식했습니다. 동시에 라이다 장착 좌표 보정각 연산을 추가하여 로봇 정지 시 장애물 방향으로 머리를 회전시키는 로직을 이식했습니다.
             </p>
-            <span class="timeline-badge">Matplotlib 3D 1:1:1</span>
-            <span class="timeline-badge">Plotly 3D HTML 1st version</span>
+            <span class="timeline-badge">Nav2 Cancel Action</span>
+            <span class="timeline-badge">LiDAR to Chassis TF</span>
+            <span class="timeline-badge">Yaw Rotation Logic</span>
           </div>
         </div>
 
         <div class="timeline-item left">
           <div class="timeline-content">
-            <div class="timeline-phase">Phase 3 (v04 ~ v05)</div>
-            <h3 class="timeline-title">신뢰성 향상 및 통신 인터페이스</h3>
+            <div class="timeline-phase">Phase 3: YOLOv8 객체 비주얼 감시 연동</div>
+            <h3 class="timeline-title">yolo_detect_01 ~ 09.py</h3>
             <p class="timeline-desc">
-              단위를 m에서 mm로 정교화하고, 로봇 이착륙 시 발생하는 유령 노이즈(Z축 100mm 미만 영역)를 무시하는 로직을 심었습니다. 또한 타 노드에 모니터링 결과를 전달하기 위한 ROS 2 Publisher 인터페이스를 추가했습니다.
+              라이다뿐만 아니라 OAK-D 카메라의 영상을 받아 YOLOv8 딥러닝 인식을 결합했습니다. CPU의 한계 극복을 위해 CUDA를 적용하였으며, 다중 스레드(MutuallyExclusiveCallbackGroup) 분리를 통해 추론 도중 로봇 명령이 지연되지 않도록 통신 구조를 최적화했습니다.
             </p>
-            <span class="timeline-badge">Unit scaling (mm)</span>
-            <span class="timeline-badge">Noise Filter</span>
-            <span class="timeline-badge">/inspection_result Publisher</span>
+            <span class="timeline-badge">YOLOv8 CUDA Acceleration</span>
+            <span class="timeline-badge">OAK-D Depth Passthrough</span>
+            <span class="timeline-badge">Multi-threading (Executor)</span>
           </div>
         </div>
 
         <div class="timeline-item right">
           <div class="timeline-content">
-            <div class="timeline-phase">Phase 4 (v06 ~ v09)</div>
-            <h3 class="timeline-title">IoT 클라우드 디지털 트윈 완성</h3>
+            <div class="timeline-phase">Phase 4: 목적지 복구 및 완성 통합 노드</div>
+            <h3 class="timeline-title">detect_threat_node_12.py / yolo_detect_17.py</h3>
             <p class="timeline-desc">
-              단발성 에러 비상정지를 사후 통계 분석(10% 오차 임계 불량률)으로 전면 리팩토링했습니다. Firebase Storage 및 Realtime Database를 연동하여 불량 HTML 리포트를 자동 업로드하고 타임스탬프와 함께 기록을 원격 클라우드화했습니다.
+              정지 후 목적지를 잃어버리는 문제를 해결하기 위해 goal_pose 토픽 가로채기(Caching) 장치를 이식했습니다. 키보드 입력을 백그라운드 스레드로 처리하는 GUI 관제 터미널과 연동하여 원터치 `RESUME` 시 주행이 완벽히 복구되는 완성본 아키텍처를 완료했습니다.
             </p>
-            <span class="timeline-badge">Firebase RTDB</span>
-            <span class="timeline-badge">Firebase Storage API</span>
-            <span class="timeline-badge">Statistical Analysis</span>
-            <span class="timeline-badge">Digital Twin Web Interface</span>
+            <span class="timeline-badge">Goal Pose Caching</span>
+            <span class="timeline-badge">QoS Reliability Policy</span>
+            <span class="timeline-badge">Interactive Console GUI</span>
+            <span class="timeline-badge">Integration Completed</span>
           </div>
         </div>
 
@@ -1673,9 +1611,9 @@ else:
       <div class="footer-links">
         <a href="#overview" class="footer-link">개요</a>
         <a href="#role" class="footer-link">담당 업무</a>
-        <a href="#sim" class="footer-link">시뮬레이션</a>
+        <a href="#sim" class="footer-link">라이브 데모</a>
         <a href="#troubleshooting" class="footer-link">트러블슈팅</a>
-        <a href="#evolution" class="footer-link">히스토리</a>
+        <a href="#evolution" class="footer-link">진화 과정</a>
       </div>
       <div class="footer-socials">
         <a href="https://github.com/yjhyun0613/Oraibot" target="_blank" class="footer-icon-link"><i class="fa-brands fa-github"></i></a>
@@ -1683,7 +1621,7 @@ else:
         <a href="#" class="footer-icon-link"><i class="fa-solid fa-network-wired"></i></a>
       </div>
       <p class="copyright">
-        &copy; 2026 Oraibot Project. Developed by yjhyun0613. All rights reserved.
+        &copy; 2026 Oraibot AMR Project. Developed by yjhyun0613. All rights reserved.
       </p>
     </div>
   </footer>
@@ -1706,318 +1644,412 @@ else:
     });
 
     // ----------------------------------------------------
-    // Plotly 3D Hemisphere Simulation Setup
+    // HTML5 Canvas 2D TurtleBot AMR Simulation
     // ----------------------------------------------------
-    const R = 100; // Radius of dome (mm)
-    const centerX = 0, centerY = 0, centerZ = 0;
-    
-    // 1. Generate Baseline Hemisphere Points
-    let baselineX = [];
-    let baselineY = [];
-    let baselineZ = [];
+    const canvas = document.getElementById('sim-canvas');
+    const ctx = canvas.getContext('2d');
 
-    // Let's create a beautiful hemisphere wireframe grid
-    for (let theta = 0; theta <= Math.PI/2; theta += Math.PI/12) { // 7 levels
-      for (let phi = -Math.PI; phi <= Math.PI; phi += Math.PI/12) {
-        let x = R * Math.cos(theta) * Math.cos(phi);
-        let y = R * Math.cos(theta) * Math.sin(phi);
-        let z = R * Math.sin(theta);
-        baselineX.push(x);
-        baselineY.push(y);
-        baselineZ.push(z);
-      }
-    }
-
-    // 2. Generate Scan Trajectory Spiral (What the robot will trace)
-    let scanTrajectory = [];
-    let scanTotalPoints = 150;
-    
-    for (let i = 0; i < scanTotalPoints; i++) {
-      // Spiral down from top to bottom
-      let pct = i / (scanTotalPoints - 1);
-      let theta = (Math.PI / 2) * (1 - pct * 0.95); // from top to slightly above base
-      let phi = pct * Math.PI * 8; // 4 full circles
-      
-      let x = R * Math.cos(theta) * Math.cos(phi);
-      let y = R * Math.cos(theta) * Math.sin(phi);
-      let z = R * Math.sin(theta);
-      
-      scanTrajectory.push({x, y, z});
-    }
-
-    // Trace 0: Baseline (grey wireframe)
-    // Trace 1: Scan path (live path)
-    const trace0 = {
-      x: baselineX,
-      y: baselineY,
-      z: baselineZ,
-      mode: 'markers',
-      marker: {
-        size: 2,
-        color: '#334155',
-        opacity: 0.5
-      },
-      type: 'scatter3d',
-      name: '기준 설계 궤적 (Baseline)'
-    };
-
-    const trace1 = {
-      x: [],
-      y: [],
-      z: [],
-      mode: 'markers+lines',
-      line: {
-        width: 4,
-        color: '#00f5d4',
-      },
-      marker: {
-        size: 4,
-        color: '#3b82f6',
-      },
-      type: 'scatter3d',
-      name: '실시간 측정 궤적 (Live Path)'
-    };
-
-    const layout = {
-      paper_bgcolor: 'rgba(0,0,0,0)',
-      plot_bgcolor: 'rgba(0,0,0,0)',
-      margin: { l: 0, r: 0, b: 0, t: 0 },
-      scene: {
-        xaxis: { 
-          title: 'X (mm)', 
-          gridcolor: 'rgba(255,255,255,0.05)', 
-          zerolinecolor: 'rgba(255,255,255,0.1)',
-          backgroundcolor: 'rgba(0,0,0,0)',
-          color: '#64748b'
-        },
-        yaxis: { 
-          title: 'Y (mm)', 
-          gridcolor: 'rgba(255,255,255,0.05)', 
-          zerolinecolor: 'rgba(255,255,255,0.1)',
-          backgroundcolor: 'rgba(0,0,0,0)',
-          color: '#64748b'
-        },
-        zaxis: { 
-          title: 'Z (mm)', 
-          gridcolor: 'rgba(255,255,255,0.05)', 
-          zerolinecolor: 'rgba(255,255,255,0.1)',
-          backgroundcolor: 'rgba(0,0,0,0)',
-          color: '#64748b',
-          range: [0, 110]
-        },
-        aspectratio: { x: 1, y: 1, z: 0.8 },
-        camera: {
-          eye: { x: 1.4, y: 1.4, z: 1.0 }
-        }
-      },
-      legend: {
-        x: 0,
-        y: 1,
-        font: { color: '#94a3b8' }
-      }
-    };
-
-    const config = { responsive: true, displayModeBar: false };
-    
-    // Render initial Plotly setup
-    Plotly.newPlot('plotly-div', [trace0, trace1], layout, config);
-
-    // ----------------------------------------------------
-    // Simulation Logic Controller
-    // ----------------------------------------------------
-    const btnStartScan = document.getElementById('btn-start-scan');
-    const btnToggleDefect = document.getElementById('btn-toggle-defect');
+    const btnStartNav = document.getElementById('btn-start-nav');
+    const btnResume = document.getElementById('btn-resume');
     const simStatus = document.getElementById('sim-status');
-    const simCoord = document.getElementById('sim-coord');
-    const simError = document.getElementById('sim-error');
-    const simPoints = document.getElementById('sim-points');
-    const simDefects = document.getElementById('sim-defects');
-    const simFailRate = document.getElementById('sim-fail-rate');
-    const simDecision = document.getElementById('sim-decision');
+    const statVel = document.getElementById('stat-vel');
+    const statDist = document.getElementById('stat-dist');
+    const statYolo = document.getElementById('stat-yolo');
+    const statGoal = document.getElementById('stat-goal');
+    const terminalScreen = document.getElementById('terminal-screen');
     const syncDot = document.getElementById('sync-dot');
     const syncText = document.getElementById('sync-text');
-    const reportBox = document.getElementById('report-box');
-    const reportUrl = document.getElementById('report-url');
 
-    let isScanning = false;
-    let simulateDefect = false;
-    let currentPointIndex = 0;
-    let scanInterval = null;
-    let accumulatedDefects = 0;
+    // Simulation variables
+    let robot = {
+      x: 80,
+      y: 300,
+      radius: 18,
+      angle: -Math.PI / 4, // heading angle
+      targetAngle: -Math.PI / 4,
+      state: 'IDLE', // IDLE, NAVIGATING, BRAKING, ROTATING, WAITING_GUI, RESUMING
+      speed: 0,
+      rotSpeed: 0
+    };
+
+    let goal = { x: 500, y: 100, active: false };
+    let savedGoal = null;
+    let obstacle = { x: 320, y: 160, radius: 15, active: false, moving: false };
+    let laserRanges = [];
+    let obstacleDetected = false;
+    let rotationTimer = 0;
     
-    let liveX = [];
-    let liveY = [];
-    let liveZ = [];
-    let markerColors = [];
+    // Grid obstacles
+    const staticObstacles = [
+      { x: 200, y: 100, r: 25 },
+      { x: 400, y: 280, r: 35 }
+    ];
 
-    // Toggle Defect Injection
-    btnToggleDefect.addEventListener('click', () => {
-      simulateDefect = !simulateDefect;
-      if (simulateDefect) {
-        btnToggleDefect.classList.add('active');
-        btnToggleDefect.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> 오차(불량) 인위적 유도 [ON]';
-      } else {
-        btnToggleDefect.classList.remove('active');
-        btnToggleDefect.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> 오차(불량) 인위적 유도 [OFF]';
-      }
-    });
-
-    // Start / Reset Scan Simulation
-    btnStartScan.addEventListener('click', () => {
-      if (isScanning) return;
-      startScanSimulation();
-    });
-
-    function startScanSimulation() {
-      // 1. Reset Stats & Plotly Live Trace
-      isScanning = true;
-      currentPointIndex = 0;
-      accumulatedDefects = 0;
-      liveX = [];
-      liveY = [];
-      liveZ = [];
-      markerColors = [];
-      
-      btnStartScan.disabled = true;
-      simStatus.className = 'sim-status-badge status-scanning';
-      simStatus.textContent = 'SCANNING';
-      simDecision.textContent = 'MONITORING';
-      simDecision.style.color = 'var(--accent-blue)';
-      syncDot.className = 'sync-indicator active';
-      syncText.textContent = 'Firebase Cloud: Real-time Syncing (10Hz)';
-      reportBox.style.display = 'none';
-
-      // Clear the live trace in Plotly graph
-      Plotly.update('plotly-div', {
-        x: [[]],
-        y: [[]],
-        z: [[]],
-        marker: { color: [] }
-      }, {}, [1]);
-
-      // 2. Start simulation loop
-      scanInterval = setInterval(() => {
-        if (currentPointIndex >= scanTotalPoints) {
-          endScanSimulation();
-          return;
-        }
-
-        // Fetch nominal scanning point
-        let point = scanTrajectory[currentPointIndex];
-        let currentX = point.x;
-        let currentY = point.y;
-        let currentZ = point.z;
-        let calculatedError = 0;
-
-        // If defect toggled, add artificial deviation in middle/lower sections
-        if (simulateDefect && currentPointIndex > 40 && currentPointIndex < 110) {
-          // Add a growing warp/offset to make it look like a physical dent
-          let factor = Math.sin((currentPointIndex - 40) / 70 * Math.PI);
-          calculatedError = 3.5 + factor * 6.8; // error ranges up to ~10.3mm
-          
-          // Apply directional displacement away from center
-          let norm = Math.sqrt(currentX*currentX + currentY*currentY + currentZ*currentZ);
-          currentX += (currentX / norm) * calculatedError;
-          currentY += (currentY / norm) * calculatedError;
-          currentZ += (currentZ / norm) * calculatedError;
-        } else {
-          // Normal scan: Add small system/vibration noise (0.1mm - 0.9mm)
-          calculatedError = 0.2 + Math.random() * 0.7;
-          let norm = Math.sqrt(currentX*currentX + currentY*currentY + currentZ*currentZ);
-          currentX += (currentX / norm) * calculatedError;
-          currentY += (currentY / norm) * calculatedError;
-          currentZ += (currentZ / norm) * calculatedError;
-        }
-
-        // Add to arrays
-        liveX.push(currentX);
-        liveY.push(currentY);
-        liveZ.push(currentZ);
-
-        // Color check: If error exceeds 5.0mm threshold -> Color Red (Defect). Else color blue/cyan
-        let pointColor = '#00f5d4';
-        if (calculatedError >= 5.0) {
-          pointColor = '#f43f5e'; // Red
-          accumulatedDefects++;
-        } else {
-          pointColor = '#3b82f6'; // Blue
-        }
-        markerColors.push(pointColor);
-
-        // Update Plotly graph via extendTraces for performance
-        Plotly.extendTraces('plotly-div', {
-          x: [[currentX]],
-          y: [[currentY]],
-          z: [[currentZ]]
-        }, [1]);
-
-        // Dynamically color each marker according to classification
-        Plotly.restyle('plotly-div', {
-          'marker.color': [markerColors]
-        }, [1]);
-
-        // Update statistics Panel
-        simCoord.textContent = `${currentX.toFixed(1)}, ${currentY.toFixed(1)}, ${currentZ.toFixed(1)}`;
-        simError.textContent = `${calculatedError.toFixed(2)} mm`;
-        if (calculatedError >= 5.0) {
-          simError.style.color = 'var(--color-danger)';
-        } else {
-          simError.style.color = 'var(--accent-cyan)';
-        }
-        
-        simPoints.textContent = `${currentPointIndex + 1} / ${scanTotalPoints}`;
-        simDefects.textContent = accumulatedDefects;
-        
-        let liveFailRate = (accumulatedDefects / (currentPointIndex + 1)) * 100;
-        simFailRate.textContent = `${liveFailRate.toFixed(1)} %`;
-        if (liveFailRate > 10.0) {
-          simFailRate.style.color = 'var(--color-danger)';
-        } else {
-          simFailRate.style.color = 'var(--color-success)';
-        }
-
-        currentPointIndex++;
-      }, 80); // Speed up slightly (80ms per tick) to look active and dynamic
+    function appendTerminal(text, type='system') {
+      const line = document.createElement('div');
+      line.className = `term-line term-${type}`;
+      line.textContent = `[${new Date().toLocaleTimeString('ko-KR', {hour12:false})}] ${text}`;
+      terminalScreen.appendChild(line);
+      terminalScreen.scrollTop = terminalScreen.scrollHeight;
     }
 
-    function endScanSimulation() {
-      clearInterval(scanInterval);
-      isScanning = false;
-      btnStartScan.disabled = false;
+    // Button Events
+    btnStartNav.addEventListener('click', () => {
+      if (robot.state !== 'IDLE' && robot.state !== 'WAITING_GUI') return;
       
-      let finalFailRate = (accumulatedDefects / scanTotalPoints) * 100;
+      goal.active = true;
+      savedGoal = { x: goal.x, y: goal.y };
+      statGoal.textContent = `(${goal.x}, ${goal.y})`;
       
-      // Determine Pass or Fail status (10% threshold limit)
-      if (finalFailRate > 10.0) {
-        simStatus.className = 'sim-status-badge status-fail';
-        simStatus.textContent = 'FAIL (Defective)';
-        simDecision.textContent = 'FAIL';
-        simDecision.style.color = 'var(--color-danger)';
-        
-        // Mock Firebase Storage upload
-        syncDot.className = 'sync-indicator';
-        syncText.textContent = 'Firebase Cloud: Generating 3D Report...';
-        
-        setTimeout(() => {
-          syncDot.className = 'sync-indicator active';
-          syncDot.style.background = 'var(--accent-purple)';
-          syncText.textContent = 'Firebase: Defect Log & Report Uploaded!';
-          
-          // Reveal Firebase report URL box
-          reportBox.style.display = 'block';
-          reportUrl.href = `https://firebasestorage.googleapis.com/v0/b/oraibot-11234/o/reports%2Fdefect_${Date.now()}.html?alt=media`;
-        }, 1200);
+      // Spawn human obstacle ahead
+      obstacle.active = true;
+      obstacle.x = 270;
+      obstacle.y = 200;
+      obstacle.moving = true;
 
-      } else {
-        simStatus.className = 'sim-status-badge status-pass';
-        simStatus.textContent = 'PASS (Normal)';
-        simDecision.textContent = 'PASS';
-        simDecision.style.color = 'var(--color-success)';
-        
-        syncDot.className = 'sync-indicator';
-        syncText.textContent = 'Firebase Cloud: Sync Completed (Inspection Passed)';
-      }
+      robot.state = 'NAVIGATING';
+      robot.x = 80;
+      robot.y = 300;
+      robot.angle = Math.atan2(goal.y - robot.y, goal.x - robot.x);
+      robot.speed = 1.8;
+
+      simStatus.className = 'sim-status-badge status-active';
+      simStatus.textContent = 'NAVIGATING';
+      btnStartNav.disabled = true;
+      btnResume.disabled = true;
+
+      appendTerminal("📍 [Rviz] New goal pose dispatched. Calculating path...", "system");
+      appendTerminal("🚀 Nav2 controller started. Robot moving to target...", "success");
+    });
+
+    btnResume.addEventListener('click', () => {
+      if (robot.state !== 'WAITING_GUI') return;
+
+      appendTerminal("▶️ [GUI] Operator pressed 'R' (RESUME cmd sent).", "gui");
+      robot.state = 'RESUMING';
+      simStatus.className = 'sim-status-badge status-active';
+      simStatus.textContent = 'RESUMING';
+      btnResume.disabled = true;
+
+      setTimeout(() => {
+        if (savedGoal) {
+          goal.x = savedGoal.x;
+          goal.y = savedGoal.y;
+          goal.active = true;
+          robot.state = 'NAVIGATING';
+          simStatus.className = 'sim-status-badge status-active';
+          simStatus.textContent = 'NAVIGATING';
+          // Steer around human (simple dodge vector offset in simulation)
+          obstacle.moving = false; // Human stays stopped or walks away
+          obstacle.x = 1000; // Walk away out of map
+          obstacle.active = false;
+          
+          robot.angle = Math.atan2(goal.y - robot.y, goal.x - robot.x);
+          robot.speed = 1.8;
+          
+          appendTerminal("🚀 Saved goal pose republished. Resuming Nav2 planning.", "success");
+        }
+      }, 1000);
+    });
+
+    // Distance calculation helper
+    function getDistance(x1, y1, x2, y2) {
+      return Math.sqrt((x2 - x1)**2 + (y2 - y1)**2);
     }
+
+    // Main Simulation Loop (60fps)
+    function update() {
+      // 1. Robot Motion Logic
+      if (robot.state === 'NAVIGATING') {
+        // Move towards goal
+        let dx = goal.x - robot.x;
+        let dy = goal.y - robot.y;
+        let dist = getDistance(robot.x, robot.y, goal.x, goal.y);
+        
+        if (dist > 5) {
+          robot.angle = Math.atan2(dy, dx);
+          robot.x += Math.cos(robot.angle) * robot.speed;
+          robot.y += Math.sin(robot.angle) * robot.speed;
+        } else {
+          // Arrived
+          robot.state = 'IDLE';
+          robot.speed = 0;
+          goal.active = false;
+          btnStartNav.disabled = false;
+          simStatus.className = 'sim-status-badge status-idle';
+          simStatus.textContent = 'IDLE';
+          appendTerminal("🏁 Goal reached successfully! AMR standing by.", "success");
+        }
+
+        // Simulate obstacle movement
+        if (obstacle.active && obstacle.moving) {
+          // walk slowly towards robot path
+          obstacle.x += 0.2;
+          obstacle.y += 0.1;
+        }
+
+        // Lidar check
+        if (obstacle.active) {
+          let distToObstacle = getDistance(robot.x, robot.y, obstacle.x, obstacle.y) - robot.radius;
+          // In canvas scale, let's treat 120 pixels as 60cm limit (1m = 200px)
+          let limitDistance = 100; // 50cm in scaling
+          
+          // Lidar checks front angle arc (-180 to 0 degrees / -PI to 0)
+          let angleToObstacle = Math.atan2(obstacle.y - robot.y, obstacle.x - robot.x);
+          let relativeAngle = angleToObstacle - robot.angle;
+          // Normalize relative angle
+          relativeAngle = Math.atan2(Math.sin(relativeAngle), Math.cos(relativeAngle));
+
+          // If obstacle in range & in front scan sector
+          if (distToObstacle < limitDistance && relativeAngle < 0.2 && relativeAngle > -Math.PI) {
+            // Trigger emergency stop!
+            robot.state = 'BRAKING';
+            robot.speed = 0;
+            simStatus.className = 'sim-status-badge status-danger';
+            simStatus.textContent = 'EMERGENCY STOP';
+            
+            appendTerminal(`🚨 [LIDAR] Threat detected at ${(distToObstacle/200).toFixed(2)}m!`, "alert");
+            appendTerminal("🛑 Action Cancel Goal sent to /navigate_to_pose.", "alert");
+            appendTerminal("📍 Current Goal cached safely in memory.", "system");
+
+            // Calculate rotation target
+            robot.targetAngle = angleToObstacle; 
+            
+            setTimeout(() => {
+              robot.state = 'ROTATING';
+              appendTerminal("🔄 Rotating AMR to align OAK-D camera with target...", "system");
+            }, 800);
+          }
+        }
+      }
+
+      if (robot.state === 'ROTATING') {
+        let diff = robot.targetAngle - robot.angle;
+        diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+        
+        if (Math.abs(diff) > 0.05) {
+          robot.rotSpeed = diff > 0 ? 0.05 : -0.05;
+          robot.angle += robot.rotSpeed;
+        } else {
+          // Rotation finished
+          robot.rotSpeed = 0;
+          robot.state = 'WAITING_GUI';
+          simStatus.className = 'sim-status-badge status-warning';
+          simStatus.textContent = 'WAITING CLEARANCE';
+          btnResume.disabled = false;
+          appendTerminal("🖥️ [GUI] Obstacle alert topic published. Awaiting clearance ('r').", "gui");
+        }
+      }
+
+      // 2. UI Stat values update
+      if (robot.state === 'IDLE') {
+        statVel.textContent = "0.0 m/s, 0.0 rad/s";
+        statDist.textContent = "CLEARED";
+        statYolo.textContent = "CLEAR";
+        syncText.textContent = "ROS 2 DDS: /robot5/scan (Active)";
+        syncDot.style.background = "var(--accent-cyan)";
+      } else if (robot.state === 'NAVIGATING') {
+        statVel.textContent = `${(robot.speed/4).toFixed(2)} m/s, 0.0 rad/s`;
+        if (obstacle.active) {
+          let d = getDistance(robot.x, robot.y, obstacle.x, obstacle.y) - robot.radius;
+          statDist.textContent = `${(d/200).toFixed(2)} m`;
+          statYolo.textContent = d < 250 ? `PERSON DETECTION (${(d/200).toFixed(2)}m)` : "CLEAR";
+          statYolo.style.color = d < 250 ? "var(--color-warning)" : "var(--text-primary)";
+        } else {
+          statDist.textContent = "CLEARED";
+          statYolo.textContent = "CLEAR";
+        }
+      } else if (robot.state === 'BRAKING' || robot.state === 'ROTATING' || robot.state === 'WAITING_GUI') {
+        statVel.textContent = `0.0 m/s, ${(robot.rotSpeed*10).toFixed(1)} rad/s`;
+        let d = getDistance(robot.x, robot.y, obstacle.x, obstacle.y) - robot.radius;
+        statDist.textContent = `${(d/200).toFixed(2)} m (DANGER)`;
+        statYolo.textContent = `PERSON DETECTED [${(d/200).toFixed(2)}m]`;
+        statYolo.style.color = "var(--color-danger)";
+        syncText.textContent = "ROS 2 DDS: EMERGENCY OVERRIDE TRIGGERED";
+        syncDot.style.background = "var(--color-danger)";
+      }
+
+      // Draw Everything
+      draw();
+      requestAnimationFrame(update);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Warehouse Grid Lines
+      ctx.strokeStyle = '#141725';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      // Draw Static Obstacles (Pillars)
+      staticObstacles.forEach(o => {
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e2436';
+        ctx.fill();
+        ctx.strokeStyle = '#2d374f';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Hazard pattern inside pillar
+        ctx.strokeStyle = '#151926';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(o.x - o.r, o.y - o.r);
+        ctx.lineTo(o.x + o.r, o.y + o.r);
+        ctx.stroke();
+      });
+
+      // Draw Goal Target
+      if (goal.active) {
+        ctx.beginPath();
+        ctx.arc(goal.x, goal.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 245, 212, 0.2)';
+        ctx.fill();
+        ctx.strokeStyle = varColor('--accent-cyan');
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Flag post
+        ctx.beginPath();
+        ctx.moveTo(goal.x, goal.y - 12);
+        ctx.lineTo(goal.x, goal.y + 8);
+        ctx.strokeStyle = '#00f5d4';
+        ctx.stroke();
+        
+        // Flag banner
+        ctx.fillStyle = '#00f5d4';
+        ctx.beginPath();
+        ctx.moveTo(goal.x, goal.y - 12);
+        ctx.lineTo(goal.x + 12, goal.y - 7);
+        ctx.lineTo(goal.x, goal.y - 2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '9px Fira Code';
+        ctx.fillText("Goal Pose", goal.x - 22, goal.y + 22);
+      }
+
+      // Draw Path Line (Dashed)
+      if (robot.state === 'NAVIGATING') {
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(robot.x, robot.y);
+        ctx.lineTo(goal.x, goal.y);
+        ctx.stroke();
+        ctx.setLineDash([]); // Reset
+      }
+
+      // Draw Simulated Lidar Sector / Scanner Arc
+      if (robot.state !== 'IDLE') {
+        ctx.save();
+        ctx.translate(robot.x, robot.y);
+        ctx.rotate(robot.angle);
+        
+        // Arc of front lidar scan
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.08)';
+        if (robot.state === 'BRAKING' || robot.state === 'ROTATING' || robot.state === 'WAITING_GUI') {
+          ctx.fillStyle = 'rgba(239, 68, 68, 0.12)';
+        }
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, 110, -Math.PI / 2, Math.PI / 2); // 180 degrees front cone
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+      }
+
+      // Draw Human Obstacle
+      if (obstacle.active) {
+        // Warning zone around human
+        ctx.beginPath();
+        ctx.arc(obstacle.x, obstacle.y, obstacle.radius + 15, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.08)';
+        ctx.fill();
+
+        // Actual human body
+        ctx.beginPath();
+        ctx.arc(obstacle.x, obstacle.y, obstacle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.strokeStyle = '#ff7b7b';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        
+        // Inner indicator
+        ctx.beginPath();
+        ctx.arc(obstacle.x, obstacle.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#05060a';
+        ctx.fill();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 9px Inter';
+        ctx.fillText("HUMAN", obstacle.x - 16, obstacle.y - 20);
+      }
+
+      // Draw Robot (AMR Body)
+      ctx.save();
+      ctx.translate(robot.x, robot.y);
+      ctx.rotate(robot.angle);
+
+      // Chassis shadow
+      ctx.beginPath();
+      ctx.arc(0, 0, robot.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#131722';
+      ctx.fill();
+      ctx.strokeStyle = robot.state === 'WAITING_GUI' || robot.state === 'BRAKING' ? '#ef4444' : '#3b82f6';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Heading Arrow
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(robot.radius - 3, 0);
+      ctx.strokeStyle = '#f8fafc';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Left Wheel
+      ctx.fillStyle = '#07080c';
+      ctx.fillRect(-8, -robot.radius - 2, 16, 4);
+      // Right Wheel
+      ctx.fillRect(-8, robot.radius - 2, 16, 4);
+
+      // Castor ball/bumpers
+      ctx.beginPath();
+      ctx.arc(robot.radius - 5, 0, 3, 0, Math.PI*2);
+      ctx.fillStyle = '#64748b';
+      ctx.fill();
+
+      ctx.restore();
+
+      // Label robot status
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '9px Fira Code';
+      ctx.fillText("TurtleBot 4", robot.x - 30, robot.y + 32);
+    }
+
+    function varColor(varName) {
+      return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    }
+
+    // Launch simulation
+    update();
   </script>
 </body>
 </html>
