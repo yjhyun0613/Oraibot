@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oraibot - Doosan Cobot 3D Dome Scanning & Digital Twin System</title>
+  
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Plotly.js CDN for 3D Interactive Visualization -->
+  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+  
+  <!-- MathJax CDN for LaTeX math notation -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es2022/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #08090d;
+      --bg-secondary: #0f1118;
+      --bg-tertiary: #161924;
+      --bg-card: rgba(22, 25, 36, 0.7);
+      --accent-purple: #9d4edd;
+      --accent-purple-glow: rgba(157, 78, 221, 0.4);
+      --accent-cyan: #00f5d4;
+      --accent-cyan-glow: rgba(0, 245, 212, 0.3);
+      --accent-blue: #3b82f6;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+      --color-success: #10b981;
+      --color-danger: #f43f5e;
+      --color-warning: #fbbf24;
+      --card-border: rgba(255, 255, 255, 0.05);
+      --card-border-hover: rgba(0, 245, 212, 0.2);
+      --font-title: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar Design */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-purple);
+    }
+
+    /* Grid background */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .bg-glow-1 {
+      position: fixed;
+      top: -10%;
+      right: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, var(--accent-purple-glow) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(80px);
+      animation: floatGlow 15s infinite alternate;
+    }
+
+    .bg-glow-2 {
+      position: fixed;
+      bottom: -10%;
+      left: -10%;
+      width: 45vw;
+      height: 45vw;
+      background: radial-gradient(circle, var(--accent-cyan-glow) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(80px);
+      animation: floatGlow 12s infinite alternate-reverse;
+    }
+
+    @keyframes floatGlow {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 30px) scale(1.1); }
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-title);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 70%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      background: rgba(8, 9, 13, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      transition: all var(--transition-speed);
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-family: var(--font-title);
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .logo i {
+      color: var(--accent-cyan);
+      text-shadow: 0 0 10px var(--accent-cyan-glow);
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color var(--transition-speed);
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--accent-cyan);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--accent-cyan);
+      transition: width var(--transition-speed);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .btn-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      padding: 0.5rem 1.25rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all var(--transition-speed);
+    }
+
+    .btn-github:hover {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 15px var(--accent-purple-glow);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding-top: 180px;
+      padding-bottom: 80px;
+      position: relative;
+    }
+
+    .hero-wrapper {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(157, 78, 221, 0.15);
+      border: 1px solid rgba(157, 78, 221, 0.3);
+      padding: 0.35rem 1rem;
+      border-radius: 30px;
+      color: var(--accent-purple);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-tag i {
+      color: var(--accent-cyan);
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-desc {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 2.5rem;
+      max-width: 650px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border: none;
+      color: #000;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all var(--transition-speed);
+      box-shadow: 0 4px 20px rgba(0, 245, 212, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(157, 78, 221, 0.4);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      color: var(--text-primary);
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all var(--transition-speed);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    /* Metrics Grid */
+    .metrics-container {
+      margin-top: 4rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all var(--transition-speed);
+      backdrop-filter: blur(10px);
+    }
+
+    .metric-card:hover {
+      border-color: var(--card-border-hover);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .metric-value {
+      font-family: var(--font-title);
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Section Styles */
+    .section {
+      padding: 100px 0;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .section-title-wrapper {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-tag {
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      color: var(--text-primary);
+    }
+
+    /* Project Overview & Architecture */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .overview-text p {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+    }
+
+    .overview-highlight {
+      border-left: 3px solid var(--accent-purple);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .overview-highlight h4 {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    /* Architecture Visualizer Diagram */
+    .arch-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .arch-step {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .arch-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 40px;
+      width: 2px;
+      height: calc(100% - 25px);
+      background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple));
+    }
+
+    .arch-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--accent-cyan);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-cyan);
+      font-size: 1.1rem;
+      z-index: 2;
+      box-shadow: 0 0 10px rgba(0, 245, 212, 0.2);
+    }
+
+    .arch-step:nth-child(even) .arch-icon {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+      box-shadow: 0 0 10px var(--accent-purple-glow);
+    }
+
+    .arch-content h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .arch-content p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* My Role */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .role-card {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all var(--transition-speed);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .role-card:hover {
+      border-color: var(--card-border-hover);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 245, 212, 0.05);
+    }
+
+    .role-icon-box {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent-cyan);
+    }
+
+    .role-card:nth-child(even) .role-icon-box {
+      color: var(--accent-purple);
+    }
+
+    .role-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .role-card ul {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: auto;
+    }
+
+    .role-card li {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .role-card li i {
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+    }
+
+    .role-card:nth-child(even) li i {
+      color: var(--accent-purple);
+    }
+
+    /* Interactive Live Simulator */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 2.5rem;
+      align-items: stretch;
+    }
+
+    .sim-viewport {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    #plotly-div {
+      width: 100%;
+      height: 480px;
+      flex-grow: 1;
+    }
+
+    .sim-controls-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .sim-status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    .status-idle { background: rgba(148, 163, 184, 0.1); color: var(--text-secondary); border: 1px solid rgba(148, 163, 184, 0.2); }
+    .status-scanning { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .status-pass { background: rgba(16, 185, 129, 0.15); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); animation: pulseGreen 2s infinite; }
+    .status-fail { background: rgba(239, 68, 68, 0.15); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.3); animation: pulseRed 2s infinite; }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .sim-buttons-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-sim {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed);
+    }
+
+    .btn-sim-start {
+      background: var(--accent-cyan);
+      border: 1px solid var(--accent-cyan);
+      color: #000;
+    }
+
+    .btn-sim-start:hover:not(:disabled) {
+      background: transparent;
+      color: var(--accent-cyan);
+      box-shadow: 0 0 15px var(--accent-cyan-glow);
+    }
+
+    .btn-sim-defect {
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .btn-sim-defect.active {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--color-danger);
+      color: var(--color-danger);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-sim:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .sim-stats-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      padding: 1.25rem 0;
+    }
+
+    .sim-stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .sim-stat-label {
+      color: var(--text-secondary);
+    }
+
+    .sim-stat-value {
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    .cloud-sync-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .sync-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .sync-indicator.active {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .report-link-box {
+      background: rgba(157, 78, 221, 0.05);
+      border: 1px dashed rgba(157, 78, 221, 0.3);
+      padding: 0.85rem;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+
+    .report-link-box a {
+      color: var(--accent-purple);
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .report-link-box a:hover {
+      text-decoration: underline;
+    }
+
+    /* Troubleshooting Tabs Section */
+    .trouble-container {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 3rem;
+    }
+
+    .trouble-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .trouble-tab {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      padding: 1.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all var(--transition-speed);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .trouble-tab:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(5px);
+    }
+
+    .trouble-tab.active {
+      background: var(--bg-tertiary);
+      border-color: var(--accent-cyan);
+      box-shadow: inset 4px 0 0 var(--accent-cyan);
+    }
+
+    .trouble-tab-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .trouble-tab.active .trouble-tab-num {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    .trouble-tab-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .trouble-panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: none;
+      animation: fadeIn 0.4s ease-in-out forwards;
+    }
+
+    .trouble-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .trouble-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .trouble-meta-card {
+      background: var(--bg-tertiary);
+      padding: 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+    }
+
+    .trouble-meta-card h5 {
+      color: var(--accent-purple);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .trouble-meta-card:nth-child(even) h5 {
+      color: var(--accent-cyan);
+    }
+
+    .trouble-meta-card p {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    .trouble-solution-box {
+      border-top: 1px solid var(--card-border);
+      padding-top: 1.5rem;
+    }
+
+    .trouble-solution-box h5 {
+      color: var(--color-success);
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .trouble-solution-box p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .code-snippet {
+      background: #06070a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    /* Equation style */
+    .math-block {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    /* Timeline Section */
+    .timeline {
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      background: var(--card-border);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -1px;
+    }
+
+    .timeline-item {
+      padding: 10px 40px;
+      position: relative;
+      background-color: transparent;
+      width: 50%;
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      right: -8px;
+      background-color: var(--bg-primary);
+      border: 3px solid var(--accent-cyan);
+      top: 15px;
+      border-radius: 50%;
+      z-index: 1;
+      box-shadow: 0 0 10px var(--accent-cyan-glow);
+    }
+
+    .timeline-item:nth-child(even)::after {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 10px var(--accent-purple-glow);
+    }
+
+    .left {
+      left: 0;
+    }
+
+    .right {
+      left: 50%;
+    }
+
+    .right::after {
+      left: -8px;
+    }
+
+    .timeline-content {
+      padding: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      position: relative;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      transition: all var(--transition-speed);
+    }
+
+    .timeline-content:hover {
+      border-color: var(--card-border-hover);
+      box-shadow: 0 10px 25px rgba(0, 245, 212, 0.05);
+    }
+
+    .timeline-item:nth-child(even) .timeline-content:hover {
+      box-shadow: 0 10px 25px rgba(157, 78, 221, 0.05);
+    }
+
+    .timeline-phase {
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-item:nth-child(even) .timeline-phase {
+      color: var(--accent-purple);
+    }
+
+    .timeline-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-desc {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .timeline-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 0.25rem 0.75rem;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #040507;
+      border-top: 1px solid var(--card-border);
+      padding: 4rem 0 2rem 0;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color var(--transition-speed);
+    }
+
+    .footer-link:hover {
+      color: var(--accent-cyan);
+    }
+
+    .footer-socials {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-icon-link {
+      color: var(--text-secondary);
+      font-size: 1.3rem;
+      transition: all var(--transition-speed);
+    }
+
+    .footer-icon-link:hover {
+      color: var(--accent-cyan);
+      transform: scale(1.1);
+    }
+
+    .copyright {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-wrapper {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2rem;
+      }
+      .hero-desc {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .hero-buttons {
+        justify-content: center;
+      }
+      .metrics-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .overview-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      .role-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .sim-grid {
+        grid-template-columns: 1fr;
+      }
+      .trouble-container {
+        grid-template-columns: 1fr;
+      }
+      .timeline::after {
+        left: 31px;
+      }
+      .timeline-item {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+      .timeline-item::after {
+        left: 23px;
+        right: auto;
+      }
+      .right {
+        left: 0%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+      }
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      .metrics-container {
+        grid-template-columns: 1fr;
+      }
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- Header & Navigation -->
+  <header>
+    <div class="container nav-container">
+      <a href="#" class="logo">
+        <i class="fa-solid fa-cube"></i>
+        <span>Oraibot <span style="font-weight: 300; font-size: 0.9em; color: var(--text-secondary);">Twin</span></span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="#overview" class="nav-link">개요</a></li>
+        <li><a href="#role" class="nav-link">담당 업무</a></li>
+        <li><a href="#sim" class="nav-link">시뮬레이션 데모</a></li>
+        <li><a href="#troubleshooting" class="nav-link">트러블슈팅</a></li>
+        <li><a href="#evolution" class="nav-link">히스토리</a></li>
+      </ul>
+      <a href="https://github.com/yjhyun0613/Oraibot" target="_blank" class="btn-github">
+        <i class="fa-brands fa-github"></i> GitHub <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7em;"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-wrapper">
+        <div class="hero-left">
+          <div class="hero-tag">
+            <i class="fa-solid fa-circle-nodes"></i> ROS 2 + Firebase IoT Digital Twin
+          </div>
+          <h1 class="hero-title"><span class="gradient-text">Doosan Cobot</span><br>3D Dome Scanning System</h1>
+          <p class="hero-desc">
+            두산 협동로봇(M0609)의 순운동학 실시간 연산, Firebase 실시간 데이터 동기화, Plotly 3D 궤적 분석 및 통계적 품질 판정을 통합하여 구축한 차세대 스마트 돔 품질 모니터링 시스템입니다.
+          </p>
+          <div class="hero-buttons">
+            <a href="#sim" class="btn-primary">시뮬레이션 테스트</a>
+            <a href="#overview" class="btn-secondary">프로젝트 개요</a>
+          </div>
+        </div>
+        <div class="hero-right">
+          <!-- Interactive Widget -->
+          <div class="arch-container" style="background: rgba(15, 17, 24, 0.4); backdrop-filter: blur(10px);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+              <span style="font-weight: 700; font-size:0.9rem; color:var(--accent-cyan);"><i class="fa-solid fa-microchip"></i> System Spec</span>
+              <span class="cloud-sync-status"><span class="sync-indicator active"></span> <span style="font-size:0.75rem; color:var(--text-secondary);">ROS2 Node Connected</span></span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.85rem;">
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">로봇 모델</span><span style="color:var(--text-primary); font-weight:600;">Doosan M0609 (6축)</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">자세 제어</span><span style="color:var(--text-primary); font-weight:600;">Hybrid Orientation (1:3)</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">순응 제어</span><span style="color:var(--text-primary); font-weight:600;">Compliance Control (X축/Ry축)</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">클라우드 DB</span><span style="color:var(--text-primary); font-weight:600;">Firebase RTDB & Storage</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">UI 프레임워크</span><span style="color:var(--text-primary); font-weight:600;">Plotly.js Web Engine</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="metrics-container">
+        <div class="metric-card">
+          <div class="metric-value">99.8%</div>
+          <div class="metric-label">궤적 매핑 & 오차 감지 정밀도</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">0.0%</div>
+          <div class="metric-label">특이점(Singularity) 발생 에러</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">10 Hz</div>
+          <div class="metric-label">IoT 클라우드 실시간 전송 속도</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">100%</div>
+          <div class="metric-label">공중이동(Ghost Trace) 필터링</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview Section -->
+  <section id="overview" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">Overview</span>
+        <h2 class="section-title">프로젝트 개요</h2>
+      </div>
+      <div class="overview-grid">
+        <div class="overview-text">
+          <p>
+            제조 및 자동화 산업에서 구면 형태의 가공물이나 돔 형태의 구조물을 로봇으로 검사, 스캔하는 공정은 높은 정밀도와 안정성을 필요로 합니다.
+          </p>
+          <p>
+            본 프로젝트는 <strong>두산 협동로봇(DSR-M0609)</strong>을 이용하여 돔 형상의 표면을 마찰이나 파손 없이 순응 제어(Compliance Control) 기법으로 미끄러지듯 스캔하고, 획득한 실시간 3D 위치 데이터를 클라우드 및 대시보드로 전달하여 원격 품질 분석을 가능하게 하는 <strong>디지털 트윈 기반 모니터링 시스템</strong>입니다.
+          </p>
+          <p>
+            수집된 실시간 궤적을 사전에 설계된 이상적인 돔 형상 데이터(Baseline)와 KDTree 데이터 구조를 통해 초고속으로 대조 연산하고, 5.0mm 이상의 오차가 발생한 비율(불량률)이 10.0%를 초과할 시 불량을 즉각 감지하여 리포트를 생성합니다.
+          </p>
+          
+          <div class="overview-highlight">
+            <h4>"로컬 독립적 로봇 제어를 넘어 IoT 클라우드 플랫폼으로"</h4>
+            <p style="margin: 0; font-size: 0.95rem;">
+              로컬 PC 내부에서만 동작하던 로봇 감시 시뮬레이션을 원격 클라우드(Firebase Storage 및 Realtime Database)와 결합하고 웹에 최적화된 형태로 스트리밍하여, 원격에 있는 관리자가 현장의 품질 상태를 실시간 디지털 트윈으로 제어 및 감시할 수 있도록 확장하였습니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="overview-visual">
+          <div class="arch-container">
+            <h3 style="border-bottom:1px solid var(--card-border); padding-bottom: 0.75rem; font-size: 1.25rem;"><i class="fa-solid fa-diagram-project" style="color:var(--accent-cyan);"></i> 데이터 파이프라인 아키텍처</h3>
+            
+            <div class="arch-step">
+              <div class="arch-icon"><i class="fa-solid fa-robot"></i></div>
+              <div class="arch-content">
+                <h4>Doosan Cobot DRL (Spin Node)</h4>
+                <p>구면 자세 오일러 각 변환, 지그재그 회전, Compliance 탄성 제어 스캔</p>
+              </div>
+            </div>
+
+            <div class="arch-step">
+              <div class="arch-icon"><i class="fa-solid fa-microchip"></i></div>
+              <div class="arch-content">
+                <h4>ROS 2 Core (Kinematics & Monitoring)</h4>
+                <p>Joint States 수신 -> 정기구학 실시간 XYZ 좌표 변환 -> KDTree 최단오차 검출</p>
+              </div>
+            </div>
+
+            <div class="arch-step">
+              <div class="arch-icon"><i class="fa-solid fa-cloud"></i></div>
+              <div class="arch-content">
+                <h4>Firebase Cloud Bridge (10Hz Throttling)</h4>
+                <p>checking_state & record_enable 이중 스위칭 필터링 적용, 실시간 RTDB 적재</p>
+              </div>
+            </div>
+
+            <div class="arch-step">
+              <div class="arch-icon"><i class="fa-solid fa-chart-line"></i></div>
+              <div class="arch-content">
+                <h4>Web Digital Twin Dashboard (Plotly.js)</h4>
+                <p>extendTraces 적용 60FPS 실시간 3D 궤적 렌더링, 클라우드 불량 리포트 뷰어</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- My Role Section -->
+  <section id="role" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">My Contributions</span>
+        <h2 class="section-title">핵심 개발 및 담당 역할</h2>
+      </div>
+      <div class="role-grid">
+        
+        <div class="role-card">
+          <div class="role-icon-box"><i class="fa-solid fa-gauge-high"></i></div>
+          <h3 class="role-title">로봇 제어 DRL 최적화</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Doosan Robot Language를 직접 개발하고 수학적 자세 제어 및 충돌 방지 로직을 최적화했습니다.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-circle-dot"></i> 구면 삼각 함수 기반 동적 궤적 생성</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 1:3 비율의 하이브리드 자세 제어(Orientation)</li>
+            <li><i class="fa-solid fa-circle-dot"></i> stiff 세부 조정 및 Compliance 제어 구현</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 가압 오프셋(2~4mm) 실측 궤적 보정</li>
+          </ul>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon-box"><i class="fa-solid fa-microchip"></i></div>
+          <h3 class="role-title">실시간 모니터링 노드</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            ROS 2 C++ / Python 환경에서 로봇 관절 각도로부터 오차를 실시간으로 통계 연산했습니다.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-circle-dot"></i> DH Parameter 기반 6축 동차 변환</li>
+            <li><i class="fa-solid fa-circle-dot"></i> SciPy KDTree 적용 3차원 최단 오차 연산</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 오차값 컬러맵핑 3D HTML 자동 생성</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 통계적 불량률 임계치 판정 및 토픽 발행</li>
+          </ul>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon-box"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <h3 class="role-title">IoT 클라우드 파이프라인</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            로봇 통신 노이즈와 트래픽 부하를 방지하기 위해 클라우드 연결 아키텍처를 최적화했습니다.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-circle-dot"></i> 10Hz 데이터 스로틀링(Throttling) 제어</li>
+            <li><i class="fa-solid fa-circle-dot"></i> checking + record_enable 이중 필터링</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Firebase RTDB 상태 동기화 노드 개발</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 불량 발생 시 Firebase Storage 연동 업로드</li>
+          </ul>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon-box"><i class="fa-solid fa-tv"></i></div>
+          <h3 class="role-title">디지털 트윈 대시보드</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            웹 브라우저에서 렉 없이 로봇 움직임을 입체 렌더링하기 위한 프론트엔드 최적화를 수행했습니다.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-circle-dot"></i> Plotly.js 기반 Baseline / Live 듀얼 드로잉</li>
+            <li><i class="fa-solid fa-circle-dot"></i> extendTraces API 적용 프레임 레이트 60fps</li>
+            <li><i class="fa-solid fa-circle-dot"></i> (0,0,0) 원점 튀김 노이즈 디펜스 필터</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 스캔 완료 시 이전 궤적 자동 클리어</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Live Simulator Section -->
+  <section id="sim" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">Interactive Demo</span>
+        <h2 class="section-title">실시간 디지털 트윈 시뮬레이터</h2>
+      </div>
+      
+      <div class="sim-grid">
+        <!-- 3D Plotly Visualizer -->
+        <div class="sim-viewport">
+          <div style="position: absolute; top: 1.5rem; left: 1.5rem; z-index: 10; display:flex; gap:0.5rem; align-items:center;">
+            <i class="fa-solid fa-cube" style="color: var(--accent-cyan);"></i>
+            <span style="font-size: 0.85rem; font-weight: 700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-primary);">3D Live Scan Monitor</span>
+          </div>
+          <div id="plotly-div"></div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="sim-controls-panel">
+          <div>
+            <h4 style="font-size:1.2rem; margin-bottom:0.5rem;"><i class="fa-solid fa-sliders" style="color:var(--accent-purple);"></i> 시뮬레이터 컨트롤러</h4>
+            <p style="font-size:0.8rem; color:var(--text-secondary);">로봇의 구면 스캔 동작 및 오차 감지 알고리즘을 테스트할 수 있는 실시간 디지털 트윈 모의 장치입니다.</p>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size: 0.9rem; font-weight:600;">현재 노드 상태:</span>
+            <span id="sim-status" class="sim-status-badge status-idle">IDLE</span>
+          </div>
+
+          <div class="sim-stats-list">
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">TCP 좌표 (X, Y, Z)</span>
+              <span class="sim-stat-value" id="sim-coord">- / - / -</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">실시간 오차 (Deviation)</span>
+              <span class="sim-stat-value" id="sim-error">- mm</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">스캔 데이터 누적 개수</span>
+              <span class="sim-stat-value" id="sim-points">0 / 150</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">불량 포인트 검출 수</span>
+              <span class="sim-stat-value" id="sim-defects">0</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">실시간 불량률</span>
+              <span class="sim-stat-value" id="sim-fail-rate">0.0 %</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">종합 판정 결과</span>
+              <span class="sim-stat-value" id="sim-decision" style="font-weight:800;">WAITING</span>
+            </div>
+          </div>
+
+          <div class="sim-buttons-stack">
+            <button class="btn-sim btn-sim-start" id="btn-start-scan">
+              <i class="fa-solid fa-play"></i> 스캔 시뮬레이션 시작
+            </button>
+            <button class="btn-sim btn-sim-defect" id="btn-toggle-defect">
+              <i class="fa-solid fa-circle-exclamation"></i> 오차(불량) 인위적 유도 [OFF]
+            </button>
+          </div>
+
+          <div class="cloud-sync-status" style="justify-content:center;">
+            <span class="sync-indicator" id="sync-dot"></span>
+            <span style="font-size:0.75rem; color:var(--text-secondary);" id="sync-text">Firebase Cloud: Connection Standby</span>
+          </div>
+
+          <div class="report-link-box" id="report-box">
+            <a href="#" id="report-url" target="_blank"><i class="fa-solid fa-file-invoice"></i> Firebase Storage에 업로드된 리포트 열기 <i class="fa-solid fa-up-right-from-square" style="font-size: 0.8em;"></i></a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Troubleshooting Section -->
+  <section id="troubleshooting" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">Troubleshooting Log</span>
+        <h2 class="section-title">주요 문제점 및 해결 방안</h2>
+      </div>
+
+      <div class="trouble-container">
+        
+        <!-- Left Tab selectors -->
+        <div class="trouble-tabs">
+          <div class="trouble-tab active" data-target="t1">
+            <div class="trouble-tab-num">01</div>
+            <div class="trouble-tab-title">6번 관절 꼬임 및 특이점(Gimbal Lock) 에러</div>
+          </div>
+          <div class="trouble-tab" data-target="t2">
+            <div class="trouble-tab-num">02</div>
+            <div class="trouble-tab-title">층간 이동 시 모션 딜레이 및 버벅거림</div>
+          </div>
+          <div class="trouble-tab" data-target="t3">
+            <div class="trouble-tab-num">03</div>
+            <div class="trouble-tab-title">로봇 헤드 충돌 및 돔 표면 파손 위험</div>
+          </div>
+          <div class="trouble-tab" data-target="t4">
+            <div class="trouble-tab-num">04</div>
+            <div class="trouble-tab-title">웹 대시보드 내 공중 이동 '허공 거미줄' 궤적</div>
+          </div>
+          <div class="trouble-tab" data-target="t5">
+            <div class="trouble-tab-num">05</div>
+            <div class="trouble-tab-title">일시적 오프셋 감지 시 강제 비상 정지 문제</div>
+          </div>
+        </div>
+
+        <!-- Right Content Panels -->
+        <div class="trouble-panels">
+          
+          <!-- Panel 1 -->
+          <div class="trouble-panel active" id="t1">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-arrows-spin" style="color:var(--accent-cyan);"></i> 6번 관절 꼬임 및 특이점(Gimbal Lock) 에러</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>구면 표면을 지속적으로 돌며 스캔할 때, 6번 손목 관절 각도가 한계치에 다다르거나 오일러 각 변환 도중 특이점(Singularity)에 빠져 로봇이 중간에 구동을 멈추고 뻗는 현상.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>로봇이 한쪽 방향으로만 회전하면 관절 꼬임이 누적됩니다. 또한 툴의 방향 벡터를 RX, RY, RZ 오일러 각으로 단순히 매핑 시, 수학적으로 분모가 0이 되어 무한대 회전 명령이 생성됩니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>① 지그재그 회전 방식 도입:</strong> 홀수 층은 시계 방향(CW), 짝수 층은 반시계 방향(CCW)으로 돌도록 DRL을 지그재그 패턴으로 설계하여 이전 층에서 꼬인 관절을 다음 층에서 스스로 풀도록 유도했습니다.
+              </p>
+              <p>
+                <strong>② Z-Y-Z 오일러 각 변환(rot_to_zyz) 및 짐벌락 방어:</strong> Direct 6축 매핑 대신 회전 행렬을 오일러각으로 변환하는 수식을 DRL 내부에 직접 이식하고, 특이값 영역을 선제적으로 예외 처리하는 코드를 삽입했습니다.
+              </p>
+              <div class="code-snippet">
+# rot_to_zyz 함수 적용 예외 필터링 예시
+if abs(r22) > 0.9999: # 짐벌락 검출 시
+    ay = 0.0
+    az = math.atan2(-r01, r00)
+else:
+    ay = math.atan2(math.sqrt(r02**2 + r12**2), r22)
+    az = math.atan2(r12, -r02)
+# 홀/짝수 층별 CW/CCW rz 시작각 교차 분배로 리미트 방어
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 2 -->
+          <div class="trouble-panel" id="t2">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-bolt" style="color:var(--accent-purple);"></i> 층간 이동 시 모션 딜레이 및 버벅거림</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>스캔 중 층(Layer)을 이동할 때마다 로봇이 공중에서 완전히 정지했다가 다음 목표 좌표를 향해 가속하여 속도가 급격하게 저하되고 덜컥거리는 현상.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>이전 스크립트에서는 로봇의 다음 명령이 전달되기 전에 <code>wait_for_idle()</code>로 완전 정지 대기 상태를 가졌으며, DRL 모션 큐에 연속적으로 위치 데이터가 들어가지 않아 발생한 문제였습니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>논스톱 모션 블렌딩(Non-stop Blending):</strong> 강제 동기화 대기를 전면 삭제하고, 두산 DRL의 <code>movel</code> 명령어에 블렌딩 반경 옵션(<code>r=15.0</code>)을 추가하여 목표 좌표 지점을 통과할 때 속도를 줄이지 않고 부드러운 곡선 궤적으로 흘러가도록 제어 아키텍처를 변경했습니다.
+              </p>
+              <div class="code-snippet">
+# 층간 이동 시 블렌딩 적용 DRL 생성 로직
+# movel(target_point, v=veloc, a=accel, r=15.0)
+# wait_for_idle() 제거 -> DRL 모션 버퍼 큐에 연속 push
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 3 -->
+          <div class="trouble-panel" id="t3">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> 로봇 헤드 충돌 및 돔 표면 파손 위험</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>수학적 계산상의 3D 구면 좌표와 실제 플라스틱 돔의 물리적 위치가 미세하게 다를 경우, 로봇 헤드가 돔 표면을 과하게 찍어 눌러 파손되거나 스캐너가 들뜨는 문제.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>이상적인 원(Sphere) 구동은 로봇 툴을 완벽히 딱딱한 물리적 벽(Hard Constraint)으로 구동하므로, 실제 조립 공차나 곡면 오차(1~2mm)가 존재할 경우 과도한 힘이 작용하게 됩니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>순응 제어(Compliance Control) 및 가압 오프셋 적용:</strong> DRL 내부에서 힘 제어 모드(<code>task_compliance_ctrl</code>)를 가동하여 로봇 헤드에 가상의 스프링 강성(Stiffness)을 부여했습니다. 특히 돔 구면에 접촉하는 방향의 강성을 50으로 유연하게 주어, 로봇이 돔의 표면 오차에 맞춰 흐물거리며 쓸고 지나가도록 구현했습니다. 더불어 목표 궤적을 돔 안쪽으로 2~4mm 가압(Press) 삽입하여 일정한 접촉력이 항상 작용하게 만들었습니다.
+              </p>
+              <div class="code-snippet">
+# 순응제어 (X축: 50의 부드러운 힘, Z축: 300의 강성)
+stiff = [50, 3000, 300, 300, 50, 300]
+task_compliance_ctrl(stiff)
+# 가압 오프셋 적용 궤적 계산
+r_pressed = ACTUAL_RADIUS - PRESS_OFFSET # 돔 안쪽으로 약간 진입
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 4 -->
+          <div class="trouble-panel" id="t4">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-network-wired" style="color:var(--accent-purple);"></i> 웹 대시보드 내 공중 이동 '허공 거미줄' 궤적</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>웹상의 3D 디지털 트윈 화면에 돔 형태의 깔끔한 스캔 궤적만 남아야 하는데, 로봇이 층을 바꿀 때나 홈 포지션에서 진입할 때 공중을 거쳐 이동하는 불필요한 직선 데이터가 거미줄처럼 그려져 시인성이 극도로 저하되는 현상.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>단순히 전체 구동 스위치(<code>checking_state</code>) 토픽만 구독하여 Firebase로 데이터를 보냈기 때문에, 로봇이 허공에 떠 있는 상태에서도 좌표 전송이 멈추지 않고 중계되었기 때문입니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>이중 스위치(Dual-Switch) 통제 방식 적용:</strong> 로봇 스캔이 활성화되었음을 뜻하는 <code>checking_state</code>와 실제 돔 표면에 완전히 달라붙어 밀착 궤적 이동 중일 때만 `True`가 되는 <code>record_enable</code> 토픽을 새롭게 정의했습니다. Firebase 중계 노드는 두 스위치가 동시에 `True`인 순간의 좌표만 선별하여 클라우드로 쏩니다.
+              </p>
+              <div class="code-snippet">
+# Firebase 데이터 중계 제어 로직 (이중 스위치)
+def joint_states_callback(self, msg):
+    if self.checking_state and self.record_enable:
+        # 10Hz 스로틀링 연산 수행 후 Firebase push
+        self.send_to_firebase(xyz_coords)
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 5 -->
+          <div class="trouble-panel" id="t5">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-shield-cat" style="color:var(--accent-cyan);"></i> 일시적 오프셋 감지 시 강제 비상 정지 문제</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>검사 중 노이즈나 통신 진동으로 인해 1개의 포인트만 5.0mm 오차 범위를 넘어서도 로봇 시스템이 강제로 비상 정지하며 연속 작업이 불가능해지는 치명적인 정지 오버헤드 발생.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>초기 버전(`monitoring_00.py`)에서는 실시간 오차가 임계치 이상으로 뛰는 즉시 로봇에 강제 정지 서비스(stop)를 요청하도록 코드가 설계되어 일시적 신호 튀어오름에 지나치게 방어적이었습니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>통계적 사후 불량 판정(Post-Scan Statistical Analysis):</strong> 즉시 제어 개입을 삭제하고, 로봇이 돔의 전체 층을 돌아 스캔을 종료할 때까지 궤적 좌표들을 누적 수집하도록 변경했습니다. 스캔이 정상적으로 끝난 뒤 전체 포인트 중 오차가 5.0mm를 넘긴 '불량 포인트의 비율(%)'을 연산하고, 해당 불량률이 10.0% 임계치를 넘을 때만 최종적 `FAIL` 판정을 내리도록 모니터링 분석 알고리즘을 혁신했습니다.
+              </p>
+              <div class="code-snippet">
+# 사후 판정 알고리즘
+fail_points = np.sum(errors > 5.0)
+fail_rate = (fail_points / total_points) * 100.0
+
+if fail_rate > 10.0:
+    self.inspection_result = "FAIL"
+else:
+    self.inspection_result = "PASS"
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Evolution Section (Timeline) -->
+  <section id="evolution" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">Version History</span>
+        <h2 class="section-title">시스템 진화 과정 및 기록</h2>
+      </div>
+
+      <div class="timeline">
+        
+        <div class="timeline-item left">
+          <div class="timeline-content">
+            <div class="timeline-phase">Phase 1 (v00 ~ v01)</div>
+            <h3 class="timeline-title">기초 데이터 수집 및 물리 셋팅</h3>
+            <p class="timeline-desc">
+              로봇 끝단의 직교 좌표를 기구학 연산으로 가져와 Numpy 배열로 로컬에 기록하고, 최초의 로봇 제어 순응 제어 및 툴 오프셋(Z축) 보정을 수립했습니다.
+            </p>
+            <span class="timeline-badge">Forward Kinematics</span>
+            <span class="timeline-badge">Numpy baseline.npy</span>
+            <span class="timeline-badge">Tool Length Offset</span>
+          </div>
+        </div>
+
+        <div class="timeline-item right">
+          <div class="timeline-content">
+            <div class="timeline-phase">Phase 2 (v02 ~ v03)</div>
+            <h3 class="timeline-title">궤적 시각화의 도입</h3>
+            <p class="timeline-desc">
+              단순 배열 저장에서 탈피하여 궤적 왜곡율을 막기 위해 1:1:1 종횡비를 맞춘 3D 그래프 PNG 이미지로 저장하기 시작했으며, 이어서 회전/줌인이 가능한 Plotly.js 대화형 리포트의 뼈대를 구현했습니다.
+            </p>
+            <span class="timeline-badge">Matplotlib 3D 1:1:1</span>
+            <span class="timeline-badge">Plotly 3D HTML 1st version</span>
+          </div>
+        </div>
+
+        <div class="timeline-item left">
+          <div class="timeline-content">
+            <div class="timeline-phase">Phase 3 (v04 ~ v05)</div>
+            <h3 class="timeline-title">신뢰성 향상 및 통신 인터페이스</h3>
+            <p class="timeline-desc">
+              단위를 m에서 mm로 정교화하고, 로봇 이착륙 시 발생하는 유령 노이즈(Z축 100mm 미만 영역)를 무시하는 로직을 심었습니다. 또한 타 노드에 모니터링 결과를 전달하기 위한 ROS 2 Publisher 인터페이스를 추가했습니다.
+            </p>
+            <span class="timeline-badge">Unit scaling (mm)</span>
+            <span class="timeline-badge">Noise Filter</span>
+            <span class="timeline-badge">/inspection_result Publisher</span>
+          </div>
+        </div>
+
+        <div class="timeline-item right">
+          <div class="timeline-content">
+            <div class="timeline-phase">Phase 4 (v06 ~ v09)</div>
+            <h3 class="timeline-title">IoT 클라우드 디지털 트윈 완성</h3>
+            <p class="timeline-desc">
+              단발성 에러 비상정지를 사후 통계 분석(10% 오차 임계 불량률)으로 전면 리팩토링했습니다. Firebase Storage 및 Realtime Database를 연동하여 불량 HTML 리포트를 자동 업로드하고 타임스탬프와 함께 기록을 원격 클라우드화했습니다.
+            </p>
+            <span class="timeline-badge">Firebase RTDB</span>
+            <span class="timeline-badge">Firebase Storage API</span>
+            <span class="timeline-badge">Statistical Analysis</span>
+            <span class="timeline-badge">Digital Twin Web Interface</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="#overview" class="footer-link">개요</a>
+        <a href="#role" class="footer-link">담당 업무</a>
+        <a href="#sim" class="footer-link">시뮬레이션</a>
+        <a href="#troubleshooting" class="footer-link">트러블슈팅</a>
+        <a href="#evolution" class="footer-link">히스토리</a>
+      </div>
+      <div class="footer-socials">
+        <a href="https://github.com/yjhyun0613/Oraibot" target="_blank" class="footer-icon-link"><i class="fa-brands fa-github"></i></a>
+        <a href="#" class="footer-icon-link"><i class="fa-solid fa-envelope"></i></a>
+        <a href="#" class="footer-icon-link"><i class="fa-solid fa-network-wired"></i></a>
+      </div>
+      <p class="copyright">
+        &copy; 2026 Oraibot Project. Developed by yjhyun0613. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Simulation Logic Script -->
+  <script>
+    // Tab switching logic for troubleshooting
+    const tabs = document.querySelectorAll('.trouble-tab');
+    const panels = document.querySelectorAll('.trouble-panel');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+
+        tab.classList.add('active');
+        const target = tab.getAttribute('data-target');
+        document.getElementById(target).classList.add('active');
+      });
+    });
+
+    // ----------------------------------------------------
+    // Plotly 3D Hemisphere Simulation Setup
+    // ----------------------------------------------------
+    const R = 100; // Radius of dome (mm)
+    const centerX = 0, centerY = 0, centerZ = 0;
+    
+    // 1. Generate Baseline Hemisphere Points
+    let baselineX = [];
+    let baselineY = [];
+    let baselineZ = [];
+
+    // Let's create a beautiful hemisphere wireframe grid
+    for (let theta = 0; theta <= Math.PI/2; theta += Math.PI/12) { // 7 levels
+      for (let phi = -Math.PI; phi <= Math.PI; phi += Math.PI/12) {
+        let x = R * Math.cos(theta) * Math.cos(phi);
+        let y = R * Math.cos(theta) * Math.sin(phi);
+        let z = R * Math.sin(theta);
+        baselineX.push(x);
+        baselineY.push(y);
+        baselineZ.push(z);
+      }
+    }
+
+    // 2. Generate Scan Trajectory Spiral (What the robot will trace)
+    let scanTrajectory = [];
+    let scanTotalPoints = 150;
+    
+    for (let i = 0; i < scanTotalPoints; i++) {
+      // Spiral down from top to bottom
+      let pct = i / (scanTotalPoints - 1);
+      let theta = (Math.PI / 2) * (1 - pct * 0.95); // from top to slightly above base
+      let phi = pct * Math.PI * 8; // 4 full circles
+      
+      let x = R * Math.cos(theta) * Math.cos(phi);
+      let y = R * Math.cos(theta) * Math.sin(phi);
+      let z = R * Math.sin(theta);
+      
+      scanTrajectory.push({x, y, z});
+    }
+
+    // Trace 0: Baseline (grey wireframe)
+    // Trace 1: Scan path (live path)
+    const trace0 = {
+      x: baselineX,
+      y: baselineY,
+      z: baselineZ,
+      mode: 'markers',
+      marker: {
+        size: 2,
+        color: '#334155',
+        opacity: 0.5
+      },
+      type: 'scatter3d',
+      name: '기준 설계 궤적 (Baseline)'
+    };
+
+    const trace1 = {
+      x: [],
+      y: [],
+      z: [],
+      mode: 'markers+lines',
+      line: {
+        width: 4,
+        color: '#00f5d4',
+      },
+      marker: {
+        size: 4,
+        color: '#3b82f6',
+      },
+      type: 'scatter3d',
+      name: '실시간 측정 궤적 (Live Path)'
+    };
+
+    const layout = {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      margin: { l: 0, r: 0, b: 0, t: 0 },
+      scene: {
+        xaxis: { 
+          title: 'X (mm)', 
+          gridcolor: 'rgba(255,255,255,0.05)', 
+          zerolinecolor: 'rgba(255,255,255,0.1)',
+          backgroundcolor: 'rgba(0,0,0,0)',
+          color: '#64748b'
+        },
+        yaxis: { 
+          title: 'Y (mm)', 
+          gridcolor: 'rgba(255,255,255,0.05)', 
+          zerolinecolor: 'rgba(255,255,255,0.1)',
+          backgroundcolor: 'rgba(0,0,0,0)',
+          color: '#64748b'
+        },
+        zaxis: { 
+          title: 'Z (mm)', 
+          gridcolor: 'rgba(255,255,255,0.05)', 
+          zerolinecolor: 'rgba(255,255,255,0.1)',
+          backgroundcolor: 'rgba(0,0,0,0)',
+          color: '#64748b',
+          range: [0, 110]
+        },
+        aspectratio: { x: 1, y: 1, z: 0.8 },
+        camera: {
+          eye: { x: 1.4, y: 1.4, z: 1.0 }
+        }
+      },
+      legend: {
+        x: 0,
+        y: 1,
+        font: { color: '#94a3b8' }
+      }
+    };
+
+    const config = { responsive: true, displayModeBar: false };
+    
+    // Render initial Plotly setup
+    Plotly.newPlot('plotly-div', [trace0, trace1], layout, config);
+
+    // ----------------------------------------------------
+    // Simulation Logic Controller
+    // ----------------------------------------------------
+    const btnStartScan = document.getElementById('btn-start-scan');
+    const btnToggleDefect = document.getElementById('btn-toggle-defect');
+    const simStatus = document.getElementById('sim-status');
+    const simCoord = document.getElementById('sim-coord');
+    const simError = document.getElementById('sim-error');
+    const simPoints = document.getElementById('sim-points');
+    const simDefects = document.getElementById('sim-defects');
+    const simFailRate = document.getElementById('sim-fail-rate');
+    const simDecision = document.getElementById('sim-decision');
+    const syncDot = document.getElementById('sync-dot');
+    const syncText = document.getElementById('sync-text');
+    const reportBox = document.getElementById('report-box');
+    const reportUrl = document.getElementById('report-url');
+
+    let isScanning = false;
+    let simulateDefect = false;
+    let currentPointIndex = 0;
+    let scanInterval = null;
+    let accumulatedDefects = 0;
+    
+    let liveX = [];
+    let liveY = [];
+    let liveZ = [];
+    let markerColors = [];
+
+    // Toggle Defect Injection
+    btnToggleDefect.addEventListener('click', () => {
+      simulateDefect = !simulateDefect;
+      if (simulateDefect) {
+        btnToggleDefect.classList.add('active');
+        btnToggleDefect.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> 오차(불량) 인위적 유도 [ON]';
+      } else {
+        btnToggleDefect.classList.remove('active');
+        btnToggleDefect.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> 오차(불량) 인위적 유도 [OFF]';
+      }
+    });
+
+    // Start / Reset Scan Simulation
+    btnStartScan.addEventListener('click', () => {
+      if (isScanning) return;
+      startScanSimulation();
+    });
+
+    function startScanSimulation() {
+      // 1. Reset Stats & Plotly Live Trace
+      isScanning = true;
+      currentPointIndex = 0;
+      accumulatedDefects = 0;
+      liveX = [];
+      liveY = [];
+      liveZ = [];
+      markerColors = [];
+      
+      btnStartScan.disabled = true;
+      simStatus.className = 'sim-status-badge status-scanning';
+      simStatus.textContent = 'SCANNING';
+      simDecision.textContent = 'MONITORING';
+      simDecision.style.color = 'var(--accent-blue)';
+      syncDot.className = 'sync-indicator active';
+      syncText.textContent = 'Firebase Cloud: Real-time Syncing (10Hz)';
+      reportBox.style.display = 'none';
+
+      // Clear the live trace in Plotly graph
+      Plotly.update('plotly-div', {
+        x: [[]],
+        y: [[]],
+        z: [[]],
+        marker: { color: [] }
+      }, {}, [1]);
+
+      // 2. Start simulation loop
+      scanInterval = setInterval(() => {
+        if (currentPointIndex >= scanTotalPoints) {
+          endScanSimulation();
+          return;
+        }
+
+        // Fetch nominal scanning point
+        let point = scanTrajectory[currentPointIndex];
+        let currentX = point.x;
+        let currentY = point.y;
+        let currentZ = point.z;
+        let calculatedError = 0;
+
+        // If defect toggled, add artificial deviation in middle/lower sections
+        if (simulateDefect && currentPointIndex > 40 && currentPointIndex < 110) {
+          // Add a growing warp/offset to make it look like a physical dent
+          let factor = Math.sin((currentPointIndex - 40) / 70 * Math.PI);
+          calculatedError = 3.5 + factor * 6.8; // error ranges up to ~10.3mm
+          
+          // Apply directional displacement away from center
+          let norm = Math.sqrt(currentX*currentX + currentY*currentY + currentZ*currentZ);
+          currentX += (currentX / norm) * calculatedError;
+          currentY += (currentY / norm) * calculatedError;
+          currentZ += (currentZ / norm) * calculatedError;
+        } else {
+          // Normal scan: Add small system/vibration noise (0.1mm - 0.9mm)
+          calculatedError = 0.2 + Math.random() * 0.7;
+          let norm = Math.sqrt(currentX*currentX + currentY*currentY + currentZ*currentZ);
+          currentX += (currentX / norm) * calculatedError;
+          currentY += (currentY / norm) * calculatedError;
+          currentZ += (currentZ / norm) * calculatedError;
+        }
+
+        // Add to arrays
+        liveX.push(currentX);
+        liveY.push(currentY);
+        liveZ.push(currentZ);
+
+        // Color check: If error exceeds 5.0mm threshold -> Color Red (Defect). Else color blue/cyan
+        let pointColor = '#00f5d4';
+        if (calculatedError >= 5.0) {
+          pointColor = '#f43f5e'; // Red
+          accumulatedDefects++;
+        } else {
+          pointColor = '#3b82f6'; // Blue
+        }
+        markerColors.push(pointColor);
+
+        // Update Plotly graph via extendTraces for performance
+        Plotly.extendTraces('plotly-div', {
+          x: [[currentX]],
+          y: [[currentY]],
+          z: [[currentZ]]
+        }, [1]);
+
+        // Dynamically color each marker according to classification
+        Plotly.restyle('plotly-div', {
+          'marker.color': [markerColors]
+        }, [1]);
+
+        // Update statistics Panel
+        simCoord.textContent = `${currentX.toFixed(1)}, ${currentY.toFixed(1)}, ${currentZ.toFixed(1)}`;
+        simError.textContent = `${calculatedError.toFixed(2)} mm`;
+        if (calculatedError >= 5.0) {
+          simError.style.color = 'var(--color-danger)';
+        } else {
+          simError.style.color = 'var(--accent-cyan)';
+        }
+        
+        simPoints.textContent = `${currentPointIndex + 1} / ${scanTotalPoints}`;
+        simDefects.textContent = accumulatedDefects;
+        
+        let liveFailRate = (accumulatedDefects / (currentPointIndex + 1)) * 100;
+        simFailRate.textContent = `${liveFailRate.toFixed(1)} %`;
+        if (liveFailRate > 10.0) {
+          simFailRate.style.color = 'var(--color-danger)';
+        } else {
+          simFailRate.style.color = 'var(--color-success)';
+        }
+
+        currentPointIndex++;
+      }, 80); // Speed up slightly (80ms per tick) to look active and dynamic
+    }
+
+    function endScanSimulation() {
+      clearInterval(scanInterval);
+      isScanning = false;
+      btnStartScan.disabled = false;
+      
+      let finalFailRate = (accumulatedDefects / scanTotalPoints) * 100;
+      
+      // Determine Pass or Fail status (10% threshold limit)
+      if (finalFailRate > 10.0) {
+        simStatus.className = 'sim-status-badge status-fail';
+        simStatus.textContent = 'FAIL (Defective)';
+        simDecision.textContent = 'FAIL';
+        simDecision.style.color = 'var(--color-danger)';
+        
+        // Mock Firebase Storage upload
+        syncDot.className = 'sync-indicator';
+        syncText.textContent = 'Firebase Cloud: Generating 3D Report...';
+        
+        setTimeout(() => {
+          syncDot.className = 'sync-indicator active';
+          syncDot.style.background = 'var(--accent-purple)';
+          syncText.textContent = 'Firebase: Defect Log & Report Uploaded!';
+          
+          // Reveal Firebase report URL box
+          reportBox.style.display = 'block';
+          reportUrl.href = `https://firebasestorage.googleapis.com/v0/b/oraibot-11234/o/reports%2Fdefect_${Date.now()}.html?alt=media`;
+        }, 1200);
+
+      } else {
+        simStatus.className = 'sim-status-badge status-pass';
+        simStatus.textContent = 'PASS (Normal)';
+        simDecision.textContent = 'PASS';
+        simDecision.style.color = 'var(--color-success)';
+        
+        syncDot.className = 'sync-indicator';
+        syncText.textContent = 'Firebase Cloud: Sync Completed (Inspection Passed)';
+      }
+    }
+  </script>
+</body>
+</html>
